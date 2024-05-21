@@ -1,9 +1,10 @@
-# Titel van project
+# Zonne-energie monitor
 
-**VOORNAAM NAAM:** A B
+**VOORNAAM NAAM:** Kobe Lamote
 
-**Sparringpartner:** C D
+**Sparringpartner:** Wout Klee
 
-**Projectsamenvatting in max 10 woorden:** E
+**Projectsamenvatting in max 10 woorden:** Vergelijk zonne-energie met totaal (net)verbruik.
 
-**Projecttitel:** F
+
+**Projecttitel:** Zonne-energie monitor
