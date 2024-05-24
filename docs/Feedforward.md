@@ -1,12 +1,12 @@
 # Projectgegevens
 
-**VOORNAAM NAAM:** A B
+**VOORNAAM NAAM:** Kobe Lamote
 
-**Sparringpartner:** C D
+**Sparringpartner:** Wout Klee
 
-**Projectsamenvatting in max 10 woorden:** E
+**Projectsamenvatting in max 10 woorden:** Vergelijk zonne-energie met totaal (net)verbruik.
 
-**Projecttitel:** F
+**Projecttitel:** Zonne-energie monitor
 
 # Tips voor feedbackgesprekken
 
@@ -28,42 +28,58 @@
 
 ## NA HET GESPREK
 
-> Herlees je notities en maak actiepunten. Maak keuzes uit alle feedback die je kreeg: Waar kan je mee aan de slag en wat laat je even rusten. Wat waren de prioriteiten? Neem de opdrachtfiche er nog eens bij om je focuspunten te bepalen.Noteer je actiepunten op de feedbackfiche.
+> Herlees je notities en maak actiepunten. Maak keuzes uit alle feedback die je kreeg: Waar kan je mee aan de slag en wat laat je even rusten. Wat waren de prioriteiten? Neem de opdrachtfiche er nog eens bij om je focuspunten te bepalen. Noteer je actiepunten op de feedbackfiche.
+
+# Week 1
+## to do
+- [x] Setup Raspberry Pi
+- [x] Fritzing schema schakeling
 
 # Feedforward gesprekken
 
-## Gesprek 1 (Datum: xx/xx/2024)
+## Gesprek 1 (Datum: 24/05/2024)
 
-Lector:
-
-Vragen voor dit gesprek:
-
-- vraag 1: V
-
-Dit is de feedback op mijn vragen.
-
-- feedback 1: G
-
-## Gesprek 2 (Datum: xx/xx/2024)
-
-Lector:
+Lector: Geert Desloovere
 
 Vragen voor dit gesprek:
 
-- vraag 1: V
+- vraag 1: Current sensor ina226 toevoegen + library?
+- vraag 2: Weglaten tweede energiemeter aangezien deze enkel het verbruik van de raspberry meet.
+- vraag 3: Hoe correct microcontroller aansluiten voor pulses? Ground verbinden?
+- vraag 4: Hoe schakelen verbruiker zonnepaneel 
+- vraag 5: Aansluiten relay
 
 Dit is de feedback op mijn vragen.
 
-- feedback 1: G
+- feedback 1: Ja, spanning alleen is niet genoeg. Stuur nog een mailtje. Zou zonder library moeten lukken.
+- feedback 2: Ja, mag.
+- feedback 3: Ja correct, zoals op fritzing is correct.
+- feedback 4: Zoals op fritzing maar basisweerstand toevoegen aan transistors en rode leds gebruiken
+- feedback 5: Uitleg schakelen relay
 
-## Gesprek 3 (Datum: xx/xx/2024)
+Actiepunten:
+- wijzigingen maken aan fritzing (prioriteit - deadline)
+- mail sturen voor ina226 sensor
+- uitzoeken aansturing ina226
 
-Lector:
+
+## Gesprek 2 (Datum: 24/05/2024)
+
+Lector: Frederik Waeyaert
 
 Vragen voor dit gesprek:
 
-- [x] vraag 1: V
+- vraag 1: Tabel aanmaken voor sensortype?
+- vraag 2: Datetime notatie? Zowel datum als tijd? Aparte kolom?
+- vraag 3: Hoe kan ik best data loggen van twee verschillende eenheden
+- vraag 4: actuator en sensor history in zelfde tabel?
 
 Dit is de feedback op mijn vragen.
 
-- feedback 1: G
+- feedback 1: Niet doen, overkill
+- feedback 2: Nee, datetime, 1 kolom
+- feedback 3: Geen eenheden, je weet de sensor dus je weet de eenheid + is eenheid noodzakelijk?
+- feedback 4: actuators en sensors in zelfde device tabel. Ook voor history. Niet te complex maken
+
+Actiepunten:
+- Database verder afwerken volgens feedback (deadline 27/05)
