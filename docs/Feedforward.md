@@ -83,3 +83,22 @@ Dit is de feedback op mijn vragen.
 
 Actiepunten:
 - Database verder afwerken volgens feedback (deadline 27/05)
+
+## Toermoment 1 (Datum: 28/05/2024)
+
+Lector: Dieter Roobrouck, Claudia Eeckhout, Geert Desloovere
+
+- Database minimaal maar goed
+  - Eventueel tabel `users` (nice to have)
+- Resistors zijn gewijzigd
+- Transistors nog aanpassen
+- Instructables + foto's - tijdig mee beginnen
+- Toggle in orde
+- Github project board aanmaken en telkens issues
+- Sparringspartner meer noteren
+
+Actiepunten:
+- Transistors aanpassen, met ground ipv voeding
+- Issues aanmaken en toevoegen aan board
+
+
