@@ -3,11 +3,24 @@ import RPi.GPIO as GPIO
 from repositories.MCP import MCP
 
 pinServo = 21
+pinButton = 20
 
 mcp_obj = MCP(0, 0)
 
+def button(pin):
+    buttonPress = not GPIO.input(pinButton)
+    delay = time.time()
+    while buttonPress:
+        buttonPress = not GPIO.input(pinButton)
+        if time.time() > (delay + 2):
+            print("uit")
+            return
+    print("show ip")
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pinServo, GPIO.OUT)
+GPIO.setup(pinButton, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(pinButton, GPIO.FALLING, callback=button, bouncetime=200)
 
 servo = GPIO.PWM(pinServo, 50)
 servo.start(0)
@@ -19,7 +32,6 @@ def convert_volts(data, places):
 
 def convert_percentage(data):
     percentage = (data)/float(2046)
-    print(round(percentage*100, 2))
     return percentage
 
 try:
