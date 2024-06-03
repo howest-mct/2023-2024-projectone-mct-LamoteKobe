@@ -2,25 +2,25 @@ import time
 import RPi.GPIO as GPIO
 from repositories.MCP import MCP
 
-pinServo = 21
-pinButton = 20
+pinServo = 12
+# pinButton = 20
 
 mcp_obj = MCP(0, 0)
 
-def button(pin):
-    buttonPress = not GPIO.input(pinButton)
-    delay = time.time()
-    while buttonPress:
-        buttonPress = not GPIO.input(pinButton)
-        if time.time() > (delay + 2):
-            print("uit")
-            return
-    print("show ip")
+# def button(pin):
+#     buttonPress = not GPIO.input(pinButton)
+#     delay = time.time()
+#     while buttonPress:
+#         buttonPress = not GPIO.input(pinButton)
+#         if time.time() > (delay + 2):
+#             print("uit")
+#             return
+#     print("show ip")
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pinServo, GPIO.OUT)
-GPIO.setup(pinButton, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.add_event_detect(pinButton, GPIO.FALLING, callback=button, bouncetime=200)
+# GPIO.setup(pinButton, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+# GPIO.add_event_detect(pinButton, GPIO.FALLING, callback=button, bouncetime=200)
 
 servo = GPIO.PWM(pinServo, 50)
 servo.start(0)
@@ -38,7 +38,7 @@ try:
     while True:
         oost = mcp_obj.read_channel(0)
         west = mcp_obj.read_channel(1)
-        hoek = 2.5 + 10 * (180*convert_percentage((oost-west)+1023)) / 180
+        hoek = 2.5 + 10 * (180*convert_percentage(((west-oost)*3)+1023)) / 180
         servo.ChangeDutyCycle(hoek)
         time.sleep(0.1)
 except Exception as e:
