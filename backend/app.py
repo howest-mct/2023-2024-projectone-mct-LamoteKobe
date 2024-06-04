@@ -7,6 +7,9 @@ from flask_cors import CORS
 
 # TODO: GPIO
 
+
+# ///// CONFIG \\\\\ #
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'HELLOTHISISSCERET'
 
@@ -16,21 +19,48 @@ socketio = SocketIO(app, cors_allowed_origins="*",
 CORS(app)
 
 
-# START een thread op. Belangrijk!!! Debugging moet UIT staan op start van de server, anders start de thread dubbel op
-# werk enkel met de packages gevent en gevent-websocket.
-def all_out():
-    # wait 10s with sleep sintead of threading.Timer, so we can use daemon
-    time.sleep(10)
-    while True:
-        print('*** We zetten alles uit **')
-        DataRepository.update_status_alle_lampen(0)
-        status = DataRepository.read_status_lampen()
-        socketio.emit('B2F_alles_uit', {
-                    'status': "lampen uit"})
-        socketio.emit('B2F_status_lampen', {'lampen': status})
-        # save our last run time
-        last_time_alles_uit = now
-        time.sleep(30)
+# ///// MAIN \\\\\ #
+
+pinServo = 21
+pinButton = 20
+
+mcp_obj = MCP(0, 0)
+
+def button(pin):
+    buttonPress = not GPIO.input(pinButton)
+    delay = time.time()
+    while buttonPress:
+        buttonPress = not GPIO.input(pinButton)
+        if time.time() > (delay + 2):
+            print("uit")
+            return
+    print("show ip")
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(pinServo, GPIO.OUT)
+GPIO.setup(pinButton, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(pinButton, GPIO.FALLING, callback=button, bouncetime=200)
+
+servo = GPIO.PWM(pinServo, 50)
+servo.start(0)
+
+def convert_percentage(data):
+    percentage = (data)/float(2046)
+    return percentage
+
+def main():
+    try:
+        while True:
+            oost = mcp_obj.read_channel(0)
+            west = mcp_obj.read_channel(1)
+            mult = 3
+            hoek = 2.5 + 10 * (180*convert_percentage(((oost-west)*mult)+1023)) / 180
+            servo.ChangeDutyCycle(hoek)
+            time.sleep(0.1)
+    except Exception as e:
+        print(e)
+        mcp_obj.closepi()
+        GPIO.cleanup()
 
 
 def start_thread():

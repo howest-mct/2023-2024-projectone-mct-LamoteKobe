@@ -46,4 +46,6 @@ except Exception as e:
     print(e)
     mcp_obj.closepi()
     GPIO.cleanup()
+finally:
+    GPIO.cleanup()
     
