@@ -1,6 +1,7 @@
 import smbus2
 import time
 from PIL import Image, ImageDraw
+from subprocess import check_output
 
 class OLED:
     def __init__(self, i2c_bus=1, i2c_address=0x3C):
@@ -71,7 +72,9 @@ if __name__ == "__main__":
     draw = ImageDraw.Draw(image)
     
     # Draw a simple text
-    draw.text((0, 0), "P1", fill=1)
+    ips = check_output(['hostname', '--all-ip-addresses']).decode('ascii')
+    ips = ips.split(' ')
+    draw.text((0, 0), f"{ips[0]}\n{ips[1]}", fill=1)
     
     # Display image on the OLED
     oled.display_image(image)
