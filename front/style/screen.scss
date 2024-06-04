@@ -12,38 +12,47 @@ $btn-color-hover: #414e56;
   0% {
     transform: none;
   }
+
   65% {
     transform: translateX(-80px);
   }
+
   100% {
     transform: translateX(-80px);
   }
 }
+
 @keyframes move-right {
   0% {
     transform: none;
   }
+
   65% {
     transform: translateX(80px);
   }
+
   100% {
     transform: translateX(80px);
   }
 }
+
 @keyframes move-up {
   100% {
     bottom: 100.75px;
   }
 }
+
 @keyframes move-down {
   100% {
     top: 100.75px;
   }
 }
+
 @keyframes width-to-zero {
   0% {
     width: 50px;
   }
+
   100% {
     width: 11px;
   }
@@ -98,14 +107,17 @@ body {
   user-select: none;
   width: 10rem;
   transition: none;
+
   &:hover {
     background: $btn-color-hover;
   }
+
   &:active {
     box-shadow: inset 0px 4px 10px 0px #2d363b;
     transition: background 0.14s ease-in;
   }
 }
+
 /* opmaak van de bulb */
 .c-fancy-bulb {
   position: relative;
@@ -140,6 +152,7 @@ body {
       right: 13.5rem;
       top: 5.5rem;
     }
+
     &--left:before,
     &--left:after {
       left: 1rem;
@@ -172,6 +185,7 @@ body {
     fill: $dark-yellow;
   }
 }
+
 .c-room {
   display: flex;
   flex-direction: column;
@@ -187,9 +201,11 @@ body {
     margin-bottom: 12px;
     color: #38434a;
   }
+
   &__icon {
     margin-bottom: 20px;
   }
+
   &--wait {
     .c-fancy-bulb {
       &__light {
@@ -200,6 +216,7 @@ body {
       }
     }
   }
+
   &--on {
     .c-fancy-bulb {
       &__light {
@@ -218,6 +235,7 @@ body {
             animation: width-to-zero 0.38s ease-out, move-up 0.38s ease-out;
             animation-delay: 0.14s;
           }
+
           &:after {
             animation: width-to-zero 0.38s ease-out, move-down 0.38s ease-out;
             animation-delay: 0.14s;
@@ -227,10 +245,12 @@ body {
         &--right {
           animation: move-right 0.38s ease-out, width-to-zero 0.38s ease-out;
           animation-delay: 0.14s;
+
           &:before {
             animation: width-to-zero 0.38s ease-out, move-up 0.38s ease-out;
             animation-delay: 0.14s;
           }
+
           &:after {
             animation: width-to-zero 0.38s ease-out, move-down 0.38s ease-out;
             animation-delay: 0.14s;
@@ -238,8 +258,10 @@ body {
         }
       }
     }
+
     .c-power-btn {
       background: #58c48d;
+
       &:active {
         box-shadow: inset 0px 6px 8px -1px #41b77b;
       }

@@ -5,6 +5,19 @@ from flask import Flask, jsonify
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
+
+devicePins = [0, 0, 0, 0, 0, 0, 0, 17, 27, 22]
+
+GPIO.setup(devicePins[7], GPIO.OUT)
+GPIO.setup(devicePins[8], GPIO.OUT)
+GPIO.setup(devicePins[9], GPIO.OUT)
+
+from repositories.MCP import MCP
+mcp_obj = MCP(0, 0)
+
+
 # TODO: GPIO
 
 app = Flask(__name__)
@@ -16,26 +29,31 @@ socketio = SocketIO(app, cors_allowed_origins="*",
 CORS(app)
 
 
-# START een thread op. Belangrijk!!! Debugging moet UIT staan op start van de server, anders start de thread dubbel op
-# werk enkel met de packages gevent en gevent-websocket.
-def all_out():
-    # wait 10s with sleep sintead of threading.Timer, so we can use daemon
-    time.sleep(10)
+def main():
+    sun_last_state = ""
     while True:
-        print('*** We zetten alles uit **')
-        DataRepository.update_status_alle_lampen(0)
-        status = DataRepository.read_status_lampen()
-        socketio.emit('B2F_alles_uit', {
-                    'status': "lampen uit"})
-        socketio.emit('B2F_status_lampen', {'lampen': status})
-        # save our last run time
-        last_time_alles_uit = now
-        time.sleep(30)
+        oost = mcp_obj.read_channel(0)
+        west = mcp_obj.read_channel(1)
+        DataRepository.write_ldr(oost, west)
+        if -50 < (west-oost) < 50:
+            sun_state = "zuid"
+        elif west > oost:
+            sun_state = "oost"
+        else:
+            sun_state = "west"
+
+        if sun_last_state != sun_state:
+            socketio.emit("B2F_sunpos", {"pos": sun_state})
+            sun_last_state = sun_state
+        
+        time.sleep(1)
+
+
 
 
 def start_thread():
     # threading.Timer(10, all_out).start()
-    t = threading.Thread(target=all_out, daemon=True)
+    t = threading.Thread(target=main, daemon=True)
     t.start()
     print("thread started")
 
@@ -50,31 +68,13 @@ def hallo():
 @socketio.on('connect')
 def initial_connection():
     print('A new client connect')
-    # # Send to the client!
-    # vraag de status op van de lampen uit de DB
-    status = DataRepository.read_status_lampen()
-    # socketio.emit('B2F_status_lampen', {'lampen': status})
-    # Beter is het om enkel naar de client te sturen die de verbinding heeft gemaakt.
-    emit('B2F_status_lampen', {'lampen': status}, broadcast=False)
 
-
-@socketio.on('F2B_switch_light')
-def switch_light(data):
-    print('licht gaat aan/uit', data)
-    lamp_id = data['lamp_id']
-    new_status = data['new_status']
-    # spreek de hardware aan
-    # stel de status in op de DB
-    res = DataRepository.update_status_lamp(lamp_id, new_status)
-    print(res)
-    # vraag de (nieuwe) status op van de lamp
-    data = DataRepository.read_status_lamp_by_id(lamp_id)
-    socketio.emit('B2F_verandering_lamp',  {'lamp': data})
-    # Indien het om de lamp van de TV kamer gaat, dan moeten we ook de hardware aansturen.
-    if lamp_id == '3':
-        print(f"TV kamer moet switchen naar {new_status} !")
-        # Do something
-
+@socketio.on('F2B_deviceState')
+def test(data):
+    GPIO.output(devicePins[int(data["id"])], int(data["state"]))
+    socketio.emit('B2F_deviceUpdate', { "id": data["id"], "state": int(not int(data["state"]))})
+    DataRepository.write_device_state(data["id"], data["state"])
+    
 
 if __name__ == '__main__':
     try:

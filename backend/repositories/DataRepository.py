@@ -1,4 +1,5 @@
 from .Database import Database
+from datetime import datetime
 
 
 class DataRepository:
@@ -9,26 +10,18 @@ class DataRepository:
         else:
             gegevens = request.form.to_dict()
         return gegevens
+    
 
     @staticmethod
-    def read_status_lampen():
-        sql = "SELECT * from lampen"
-        return Database.get_rows(sql)
+    def write_ldr(oost, west):
+        sql = 'insert into History (DeviceID, Date, Value) values (%s, %s, %s) '
+        # Database.execute_sql(sql, params=[1, datetime.now(), oost])
+        # Database.execute_sql(sql, params=[2, datetime.now(), west])
+
 
     @staticmethod
-    def read_status_lamp_by_id(id):
-        sql = "SELECT * from lampen WHERE id = %s"
-        params = [id]
-        return Database.get_one_row(sql, params)
+    def write_device_state(id, state):
+        sql = 'insert into History (DeviceID, Date, Value) values (%s, %s, %s)'
+        Database.execute_sql(sql, params=[id, datetime.now(), state])
 
-    @staticmethod
-    def update_status_lamp(id, status):
-        sql = "UPDATE lampen SET status = %s WHERE id = %s"
-        params = [status, id]
-        return Database.execute_sql(sql, params)
-
-    @staticmethod
-    def update_status_alle_lampen(status):
-        sql = "UPDATE lampen SET status = %s"
-        params = [status]
-        return Database.execute_sql(sql, params)
+  
