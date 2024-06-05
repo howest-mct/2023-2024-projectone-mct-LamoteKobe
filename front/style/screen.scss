@@ -2,27 +2,50 @@
 /*---------------------------------------/*
  # SETTINGS
 /*---------------------------------------*/
-$dark-yellow: #ffdb55;
-$bg-color: #aecad8;
-$btn-color: #38434a;
-$btn-color-hover: #414e56;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+$bg-white: #F4F6FA;
+$bg-dark: #53777d;
+$btn-color: #2D4043;
+$yellow: #E3D35F;
+
+
+@keyframes dash {
+  to {
+      stroke-dashoffset: 0;
+  }
+}
 /*---------------------------------------/*
  # GENERIC
 /*---------------------------------------*/
+
 
 /*---------------------------------------/*
  # ELEMENTS
 /*---------------------------------------*/
 body,
 html {
+  font-family: "Inter";
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
   height: 100%;
   width: 100%;
+  overflow-x: hidden;
 }
 
 body {
-  background: $bg-color;
+  background: $bg-dark;
   transition: all 0.14s ease-in;
+}
+
+h1{
+  font-weight: 700;
+}
+
+h2{
+  font-weight: 600;
 }
 
 /*---------------------------------------/*
@@ -40,6 +63,78 @@ body {
  # COMPONENTS
 /*---------------------------------------*/
 
+.c-nav{
+  margin: auto;
+  max-width: 15.25rem;
+  padding: 0.25rem;
+  border-radius: 1rem;
+  background: $bg-white;
+  
+  &__items{
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 0;
+  }
+  &__item{
+    display: flex;
+    padding: 0.5rem 2rem;
+    align-items: flex-start;
+    gap: 0.625rem;
+    border-radius: 0.75rem;
+    color: $btn-color;
+  }
+  &__active{
+    background: $btn-color;
+    color: $bg-white;
+  }
+}
+
+
+.c-house{
+  margin: 4rem;
+  overflow: hidden;
+}
+
+.c-text{
+  left: 50px;
+}
+
+.path {
+  stroke-dasharray: 16.8;
+  stroke-dashoffset: 100;
+  animation: dash 5s linear forwards infinite;
+  fill: none;
+  stroke: $yellow;
+  stroke-width: 1rem;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.c-power{
+  fill: none;
+  stroke: $btn-color;
+  stroke-width: 0.5rem;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  &__solar{
+    stroke-dasharray: 16.8;
+    stroke-dashoffset: 100;
+    animation: dash 5s linear forwards infinite;
+    stroke-width: 1rem;
+    stroke: $yellow;
+    stroke: $yellow;
+  }
+}
+
+.c-box{
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 2rem;
+  fill: $btn-color;
+}
+
 /*---------------------------------------/*
  # UTILITIES
 /*---------------------------------------*/
@@ -47,3 +142,7 @@ body {
 /* body.u-active {
   background: #f3f7f9;
 } */
+
+.u-rm-list{
+  list-style: none;
+}
