@@ -10,6 +10,9 @@ $bg-dark: #53777d;
 $btn-color: #2D4043;
 $yellow: #E3D35F;
 
+$system-green: #4CAF50;
+$system-blue: #4A90E2;
+
 
 @keyframes dash {
   to {
@@ -63,9 +66,23 @@ h2{
  # COMPONENTS
 /*---------------------------------------*/
 
+.c-header{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.c-settings{
+  fill: $btn-color;
+  padding: 2rem;
+  &:hover{
+    fill: $bg-white;
+  }
+}
+
 .c-nav{
-  margin: auto;
-  max-width: 15.25rem;
+  margin: 0 auto;
+  max-width: 15.5rem;
   padding: 0.25rem;
   border-radius: 1rem;
   background: $bg-white;
@@ -73,15 +90,12 @@ h2{
   &__items{
     display: flex;
     align-items: flex-start;
-    gap: 0.5rem;
     padding: 0;
     margin: 0;
   }
   &__item{
     display: flex;
     padding: 0.5rem 2rem;
-    align-items: flex-start;
-    gap: 0.625rem;
     border-radius: 0.75rem;
     color: $btn-color;
   }
@@ -89,27 +103,20 @@ h2{
     background: $btn-color;
     color: $bg-white;
   }
+  &__spacing{
+    padding: 2.8125rem;
+  }
 }
 
 
 .c-house{
-  margin: 4rem;
-  overflow: hidden;
+  margin: auto;;
+  padding-top: 2rem;
+  max-width: 64rem;
 }
 
 .c-text{
   left: 50px;
-}
-
-.path {
-  stroke-dasharray: 16.8;
-  stroke-dashoffset: 100;
-  animation: dash 5s linear forwards infinite;
-  fill: none;
-  stroke: $yellow;
-  stroke-width: 1rem;
-  stroke-linecap:round;
-  stroke-linejoin:round;
 }
 
 .c-power{
@@ -123,9 +130,30 @@ h2{
     stroke-dashoffset: 100;
     animation: dash 5s linear forwards infinite;
     stroke-width: 1rem;
-    stroke: $yellow;
+    stroke: $system-green;
+  }
+  &__grid{
+    stroke-dasharray: 16.8;
+    stroke-dashoffset: 100;
+    animation: dash 5s linear forwards infinite reverse;
+    stroke-width: 1rem;
+    stroke: $system-blue;
+  }
+  &__house{
+    stroke-dasharray: 16.8;
+    stroke-dashoffset: 100;
+    animation: dash 5s linear forwards infinite;
+    stroke-width: 1rem;
     stroke: $yellow;
   }
+  &__car{
+    stroke-dasharray: 16.8;
+    stroke-dashoffset: 100;
+    animation: dash 5s linear forwards infinite;
+    stroke-width: 1rem;
+    stroke: $system-green;
+  }
+
 }
 
 .c-box{
