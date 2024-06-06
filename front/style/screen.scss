@@ -23,6 +23,21 @@ $system-blue: #4A90E2;
  # GENERIC
 /*---------------------------------------*/
 
+.color{
+  &-solar{
+    fill: $system-green;
+    color: $system-green;
+  }
+  &-grid{
+    fill: $system-blue;
+    color: $system-blue;
+  }
+  &-car{
+    fill: $yellow;
+    color: $yellow;
+  }
+}
+
 
 /*---------------------------------------/*
  # ELEMENTS
@@ -55,11 +70,13 @@ h2{
  # OBJECTS
 /*---------------------------------------*/
 .o-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  width: 100vw;
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+  // height: 100vh;
+  // width: 100vw;
+  max-width: 64rem;
+  padding: 1rem;
 }
 
 /*---------------------------------------/*
@@ -78,6 +95,11 @@ h2{
   &:hover{
     fill: $bg-white;
   }
+  @media (max-width: 425px) {
+    padding: 0.3125rem;
+    padding-right: 1rem;
+  }
+  
 }
 
 .c-nav{
@@ -98,12 +120,19 @@ h2{
     padding: 0.5rem 2rem;
     border-radius: 0.75rem;
     color: $btn-color;
+    p{
+      margin: 0;
+    }
   }
   &__active{
     background: $btn-color;
     color: $bg-white;
   }
   &__spacing{
+    @media (max-width: 425px) {
+      padding: 1rem;
+      padding-left: 1rem;
+    }
     padding: 2.8125rem;
   }
 }
@@ -161,6 +190,102 @@ h2{
   text-transform: uppercase;
   font-size: 2rem;
   fill: $btn-color;
+}
+
+
+.c-history{
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  flex: 1 0 0;  
+
+  @media (max-width: 425px) {
+     padding-top: 2rem;
+  }
+  
+
+  &__header{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-self: stretch;
+    @media (max-width: 425px) {
+      flex-direction: column-reverse;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+  }
+  &__legend{
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    height: 2.6875rem;
+    gap: 1rem;
+    padding: 0rem 1.5rem;
+    align-items: center;
+    background-color: $bg-white;
+    color: $btn-color;
+    border-radius: 1rem;
+
+    @media (max-width: 425px) {
+      justify-content: space-evenly;
+      flex-grow: 1;
+      width: 100%;
+      padding: 0;
+    }
+
+    &__item{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  &__date{
+    font-family: "Inter";
+    appearance: none;
+    font-weight: 400;
+    font-size: 1rem;
+    display: flex;
+    height: 2.6875rem;
+    padding: 0rem 3rem 0rem 1rem;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+    background-color: $bg-white;
+    color: $btn-color;
+    fill: $btn-color;
+
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M459-381 314-526q-3-3-4.5-6.5T308-540q0-8 5.5-14t14.5-6h304q9 0 14.5 6t5.5 14q0 2-6 14L501-381q-5 5-10 7t-11 2q-6 0-11-2t-10-7Z" fill="2D4043" /></svg>');
+    background-repeat: no-repeat;
+    background-position: right 1rem top 50%;
+    // padding: 2rem;
+  }
+
+  &__graph{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1rem;
+    align-self: stretch;
+    &__item{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 1 0 0;
+      align-self: stretch;
+      flex-basis: 10rem;
+      height: auto;
+      border-radius: 1rem;
+      background-color: $bg-white;
+    }
+  }
 }
 
 /*---------------------------------------/*
