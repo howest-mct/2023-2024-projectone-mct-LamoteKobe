@@ -1,7 +1,21 @@
 const lanIP = `${window.location.hostname}:5000`;
 // const socketio = io(lanIP);
 
-const listenToUI = function () {};
+let htmlBtnHome, htmlBtnHistory, htmlHistory;
+let chartSolar, chartGrid, chartCombined;
+
+const listenToUI = function () {
+  htmlBtnHistory.addEventListener('click', function () {
+    htmlBtnHome.classList.remove('c-nav__active');
+    htmlBtnHistory.classList.add('c-nav__active');
+    htmlHistory.classList.remove('c-hidden');
+  });
+  htmlBtnHome.addEventListener('click', function () {
+    htmlBtnHistory.classList.remove('c-nav__active');
+    htmlBtnHome.classList.add('c-nav__active');
+    htmlHistory.classList.add('c-hidden');
+  });
+};
 
 const listenToSocket = function () {
   socketio.on('connect', function () {
@@ -9,29 +23,10 @@ const listenToSocket = function () {
   });
 };
 
-const init = function () {
-  console.info('DOM geladen');
-  // listenToUI();
-  // listenToSocket();
-  // document.querySelectorAll('.c-nav__item').forEach((item) => {
-  //   item.addEventListener('click', function () {
-  //     document.querySelector('.c-nav__active').classList.remove('c-nav__active');
-  //     this.classList.add('c-nav__active');
-  //   });
-  // });
-  console.log('DOM loaded');
-
-  // Double-check that the element exists
-  var chartElement = document.querySelector('#chart');
-  if (!chartElement) {
-    console.error('Chart element not found');
-    return;
-  }
-
-  // Options for the chart
+const getCharts = function () {
   var options = {
     dataLabels: {
-      enabled: false,
+      enabled: true,
     },
     chart: {
       type: 'area',
@@ -41,20 +36,13 @@ const init = function () {
     },
     series: [
       {
-        name: 'Power',
+        name: 'kW',
         data: ['10kWh', '20', '16kWh', 10, 5],
       },
     ],
     xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-      show: false,
+      categories: ['15:00', '16:00', '17:00', '18:00', '19:00'],
       labels: {
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
         show: false,
       },
     },
@@ -63,15 +51,25 @@ const init = function () {
     },
   };
 
-  // Initialize and render the chart
-  var chart = new ApexCharts(chartElement, options);
-  chart.render().catch(function (e) {
-    console.error('Error rendering chart:', e);
-  });
-  var chart = new ApexCharts(document.querySelector('#test'), options);
-  chart.render().catch(function (e) {
-    console.error('Error rendering chart:', e);
-  });
+  var chart = new ApexCharts(chartGrid, options);
+  chart.render();
+};
+
+const init = function () {
+  console.info('DOM geladen');
+
+  htmlHistory = document.querySelector('.js-history');
+
+  htmlBtnHome = document.querySelector('.js-btn-home');
+  htmlBtnHistory = document.querySelector('.js-btn-history');
+
+  chartSolar = document.querySelector('.js-chart-solar');
+  chartGrid = document.querySelector('.js-chart-grid');
+  // chartCombined = document.querySelector('.js-char-combined')
+
+  listenToUI();
+  // listenToSocket();
+  getCharts();
 };
 
 document.addEventListener('DOMContentLoaded', init);

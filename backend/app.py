@@ -75,16 +75,16 @@ def start_thread():
 def hallo():
     return "Server is running, er zijn momenteel geen API endpoints beschikbaar."
 
+@app.route('/api/v1/power/')
+def get_power():
+    return DataRepository.get_power_usage(), 200
+
 
 # SOCKET IO
 @socketio.on('connect')
 def initial_connection():
     print('A new client connect')
-    # # Send to the client!
-    # vraag de status op van de lampen uit de DB
     status = DataRepository.read_status_lampen()
-    # socketio.emit('B2F_status_lampen', {'lampen': status})
-    # Beter is het om enkel naar de client te sturen die de verbinding heeft gemaakt.
     emit('B2F_status_lampen', {'lampen': status}, broadcast=False)
 
 

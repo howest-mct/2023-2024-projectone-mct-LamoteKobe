@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>index</title>
   <link rel="stylesheet" href="style/screen.css">
-  <!-- <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script> -->
+  <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="script/datahandler.js"></script>
   <script src="script/app.js"></script>
@@ -18,10 +18,10 @@
     <div class="c-nav__spacing"></div>
     <nav class="c-nav">
       <ul class="c-nav__items u-rm-list">
-        <li class="c-nav__item c-nav__active">
+        <li class="c-nav__item c-nav__active js-btn-home">
           <p>Home</p>
         </li>
-        <li class="c-nav__item">
+        <li class="c-nav__item js-btn-history">
           <p>History</p>
         </li>
       </ul>
@@ -958,7 +958,7 @@
     </svg>
   </div>
 
-  <div class="c-history o-container">
+  <div class="c-history o-container js-history c-hidden">
     <div class="c-history__header">
       <ul class="c-history__legend">
         <li class="u-rm-list c-history__legend__item">
@@ -988,9 +988,9 @@
       </select>
     </div>
     <div class="c-history__graph">
-      <div class="c-history__graph__item" id="test">
+      <div class="c-history__graph__item js-chart-solar">
       </div>
-      <div class="c-history__graph__item" id="chart">
+      <div class="c-history__graph__item js-chart-grid">
       </div>
     </div>
   </div>

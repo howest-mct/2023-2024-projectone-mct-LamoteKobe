@@ -32,3 +32,18 @@ class DataRepository:
         sql = "UPDATE lampen SET status = %s"
         params = [status]
         return Database.execute_sql(sql, params)
+    
+    @staticmethod
+    def get_power_usage():
+        sql = "SELECT deviceid, date FROM history where deviceid = 4"
+        solar = Database.get_rows(sql)
+        sql = "SELECT deviceid, date FROM solar.History where deviceid = 5"
+        car = Database.get_rows(sql)
+        sql = "SELECT deviceid, date FROM solar.History where deviceid = 10"
+        grid = Database.get_rows(sql)
+
+        return {
+            "solar": solar,
+            "car": car,
+            "grid": grid
+        }
