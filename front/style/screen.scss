@@ -1,8 +1,6 @@
-
 /*---------------------------------------/*
  # SETTINGS
 /*---------------------------------------*/
-
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
@@ -17,26 +15,28 @@ $system-blue: #4A90E2;
 
 @keyframes dash {
   to {
-      stroke-dashoffset: 0;
+    stroke-dashoffset: 0;
   }
 }
+
 /*---------------------------------------/*
  # GENERIC
 /*---------------------------------------*/
 
-.color{
-  &-solar{
+.color {
+  &-solar {
     fill: $system-green;
     color: $system-green;
   }
-  &-grid{
+
+  &-grid {
     fill: $system-blue;
     color: $system-blue;
   }
-  &-car{
+
+  &-car {
     fill: $yellow;
     color: $yellow;
-
   }
 }
 
@@ -60,11 +60,11 @@ body {
   transition: all 0.14s ease-in;
 }
 
-h1{
+h1 {
   font-weight: 700;
 }
 
-h2{
+h2 {
   font-weight: 600;
 }
 
@@ -85,112 +85,114 @@ h2{
  # COMPONENTS
 /*---------------------------------------*/
 
-
-.c-hidden{
+.c-hidden {
   display: none !important;
 }
 
-
-.c-header{
+.c-header {
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
 
-.c-settings{
+.c-settings {
   fill: $btn-color;
   padding: 2rem;
-  &:hover{
+
+  &:hover {
     fill: $bg-white;
   }
+
   @media (max-width: 425px) {
     padding: 0.3125rem;
     padding-right: 1rem;
   }
-  
+
 }
 
-.c-nav{
+.c-nav {
   margin: 0 auto;
   max-width: 15.5rem;
   padding: 0.25rem;
   border-radius: 1rem;
   background: $bg-white;
-  
-  &__items{
+
+  &__items {
     display: flex;
     align-items: flex-start;
     padding: 0;
     margin: 0;
   }
-  &__item{
+
+  &__item {
     display: flex;
     padding: 0.5rem 2rem;
     border-radius: 0.75rem;
     color: $btn-color;
-    p{
+
+    p {
       margin: 0;
     }
-
-
-    &--left:before,
-    &--left:after {
-      left: 1rem;
-
   }
-  &__active{
+
+  &__active {
     background: $btn-color;
     color: $bg-white;
   }
-  &__spacing{
+
+  &__spacing {
     @media (max-width: 425px) {
       padding: 1rem;
       padding-left: 1rem;
-
     }
+
     padding: 2.8125rem;
   }
 }
 
 
-.c-house{
+.c-house {
   margin: auto;
   padding-top: 2rem;
-  max-width: 48rem;  
+  max-width: 48rem;
 }
 
-.c-text{
+.c-text {
   left: 50px;
 }
 
-.c-power{
+.c-power {
   fill: none;
   stroke: $btn-color;
   stroke-width: 0.5rem;
-  stroke-linecap:round;
-  stroke-linejoin:round;
-  &__solar{
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  &__solar {
     stroke-dasharray: 16.8;
     stroke-dashoffset: 100;
     animation: dash 5s linear forwards infinite;
     stroke-width: 1rem;
     stroke: $system-green;
   }
-  &__grid{
+
+  &__grid {
     stroke-dasharray: 16.8;
     stroke-dashoffset: 100;
     animation: dash 5s linear forwards infinite reverse;
     stroke-width: 1rem;
     stroke: $system-blue;
   }
-  &__house{
+
+  &__house {
     stroke-dasharray: 16.8;
     stroke-dashoffset: 100;
     animation: dash 5s linear forwards infinite;
     stroke-width: 1rem;
     stroke: $yellow;
   }
-  &__car{
+
+  &__car {
     stroke-dasharray: 16.8;
     stroke-dashoffset: 100;
     animation: dash 5s linear forwards infinite;
@@ -200,8 +202,7 @@ h2{
 
 }
 
-
-.c-box{
+.c-box {
   font-weight: 700;
   text-transform: uppercase;
   font-size: 2rem;
@@ -209,109 +210,34 @@ h2{
 }
 
 
-.c-history{
+.c-history {
   display: flex;
   justify-content: center;
   margin: auto;
   flex-direction: column;
-  background: #a3bcc9;
-  padding: 1em;
-  margin: 0 0.5em;
-
-  &__name {
-    font-family: Roboto;
-    font-size: 1.25em;
-    font-weight: 100;
-    text-align: center;
-    margin-bottom: 12px;
-    color: #38434a;
-  }
-
-  &__icon {
-    margin-bottom: 20px;
-  }
-
-  &--wait {
-    .c-fancy-bulb {
-      &__light {
-        opacity: 1;
-        transform: translate(0) scale(1);
-        transition: all 0.14s ease-in;
-        fill: rgb(248, 238, 203);
-      }
-    }
-  }
-
-  &--on {
-    .c-fancy-bulb {
-      &__light {
-        opacity: 1;
-        transform: translate(0) scale(1);
-        transition: all 0.14s ease-in;
-        fill: $dark-yellow;
-      }
-
-      &__streaks {
-        &--left {
-          animation: move-left 0.38s ease-out, width-to-zero 0.38s ease-out;
-          animation-delay: 0.14s;
-
-          &:before {
-            animation: width-to-zero 0.38s ease-out, move-up 0.38s ease-out;
-            animation-delay: 0.14s;
-          }
-
-          &:after {
-            animation: width-to-zero 0.38s ease-out, move-down 0.38s ease-out;
-            animation-delay: 0.14s;
-          }
-        }
-
-        &--right {
-          animation: move-right 0.38s ease-out, width-to-zero 0.38s ease-out;
-          animation-delay: 0.14s;
-
-          &:before {
-            animation: width-to-zero 0.38s ease-out, move-up 0.38s ease-out;
-            animation-delay: 0.14s;
-          }
-
-          &:after {
-            animation: width-to-zero 0.38s ease-out, move-down 0.38s ease-out;
-            animation-delay: 0.14s;
-          }
-        }
-      }
-    }
-
-    .c-power-btn {
-      background: #58c48d;
-
-      &:active {
-        box-shadow: inset 0px 6px 8px -1px #41b77b;
-      }
-=======
   align-items: center;
   gap: 1rem;
-  flex: 1 0 0;  
+  flex: 1 0 0;
 
   @media (max-width: 425px) {
-     padding-top: 2rem;
+    padding-top: 2rem;
   }
-  
 
-  &__header{
+
+  &__header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     align-self: stretch;
+
     @media (max-width: 425px) {
       flex-direction: column-reverse;
       gap: 1rem;
       align-items: flex-end;
     }
   }
-  &__legend{
+
+  &__legend {
     margin: 0;
     display: flex;
     justify-content: center;
@@ -330,7 +256,7 @@ h2{
       padding: 0;
     }
 
-    &__item{
+    &__item {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -338,7 +264,7 @@ h2{
     }
   }
 
-  &__date{
+  &__date {
     font-family: "Inter";
     appearance: none;
     font-weight: 400;
@@ -360,14 +286,15 @@ h2{
     // padding: 2rem;
   }
 
-  &__graph{
+  &__graph {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: flex-start;
     gap: 1rem;
     align-self: stretch;
-    &__item{
+
+    &__item {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -389,6 +316,6 @@ h2{
   background: #f3f7f9;
 } */
 
-.u-rm-list{
+.u-rm-list {
   list-style: none;
 }
