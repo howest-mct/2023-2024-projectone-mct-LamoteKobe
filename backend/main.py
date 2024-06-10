@@ -38,8 +38,11 @@ try:
     while True:
         oost = mcp_obj.read_channel(0)
         west = mcp_obj.read_channel(1)
+        print(west)
+        print(oost)
         hoek = 2.5 + 10 * (180*convert_percentage(((west-oost)*3)+1023)) / 180
-        # hoek = 2.5 + 10 * (180*convert_percentage((0.5)+1023)) / 180
+
+     
         servo.ChangeDutyCycle(hoek)
         time.sleep(0.1)
 except Exception as e:

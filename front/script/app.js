@@ -1,6 +1,7 @@
 const lanIP = `${window.location.hostname}:5000`;
 // const socketio = io(lanIP);
 
+
 let htmlBtnHome, htmlBtnHistory, htmlHistory;
 let chartSolar, chartGrid, chartCombined;
 
@@ -17,10 +18,31 @@ const listenToUI = function () {
   });
 };
 
+
+const listenToButtons = function(){
+  for(const i of htmlButtons){
+    i.addEventListener('click', function(){
+      socketio.emit('F2B_deviceState', { id: this.getAttribute('data-id'), state: this.getAttribute('data-state')})
+    })
+  }
+}
+
 const listenToSocket = function () {
   socketio.on('connect', function () {
     console.log('verbonden met socket webserver');
   });
+
+  socketio.on('B2F_deviceUpdate', function(jsonObj){
+    for(const i of htmlButtons){
+      if(i.getAttribute('data-id') == jsonObj.id){
+        i.setAttribute('data-state', jsonObj.state)
+      }
+    }
+  })
+
+  socketio.on('B2F_sunpos', function(jsonObj){
+    document.querySelector('.js-sun').innerHTML = jsonObj.pos
+  })
 };
 
 const getCharts = function () {
@@ -58,6 +80,7 @@ const getCharts = function () {
 const init = function () {
   console.info('DOM geladen');
 
+
   htmlHistory = document.querySelector('.js-history');
 
   htmlBtnHome = document.querySelector('.js-btn-home');
@@ -66,6 +89,7 @@ const init = function () {
   chartSolar = document.querySelector('.js-chart-solar');
   chartGrid = document.querySelector('.js-chart-grid');
   // chartCombined = document.querySelector('.js-char-combined')
+
 
   listenToUI();
   // listenToSocket();

@@ -5,6 +5,19 @@ from flask import Flask, jsonify
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
+
+devicePins = [0, 0, 0, 0, 0, 0, 0, 17, 27, 22]
+
+GPIO.setup(devicePins[7], GPIO.OUT)
+GPIO.setup(devicePins[8], GPIO.OUT)
+GPIO.setup(devicePins[9], GPIO.OUT)
+
+from repositories.MCP import MCP
+mcp_obj = MCP(0, 0)
+
+
 # TODO: GPIO
 
 
@@ -65,7 +78,7 @@ def main():
 
 def start_thread():
     # threading.Timer(10, all_out).start()
-    t = threading.Thread(target=all_out, daemon=True)
+    t = threading.Thread(target=main, daemon=True)
     t.start()
     print("thread started")
 
@@ -84,6 +97,7 @@ def get_power():
 @socketio.on('connect')
 def initial_connection():
     print('A new client connect')
+
     status = DataRepository.read_status_lampen()
     emit('B2F_status_lampen', {'lampen': status}, broadcast=False)
 
@@ -105,6 +119,12 @@ def switch_light(data):
         print(f"TV kamer moet switchen naar {new_status} !")
         # Do something
 
+@socketio.on('F2B_deviceState')
+def test(data):
+    GPIO.output(devicePins[int(data["id"])], int(data["state"]))
+    socketio.emit('B2F_deviceUpdate', { "id": data["id"], "state": int(not int(data["state"]))})
+    DataRepository.write_device_state(data["id"], data["state"])
+    
 
 if __name__ == '__main__':
     try:
