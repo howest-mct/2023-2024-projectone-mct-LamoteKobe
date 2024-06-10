@@ -23,12 +23,6 @@ class DataRepository:
     def write_device_state(id, state):
         sql = 'insert into History (DeviceID, Date, Value) values (%s, %s, %s)'
         Database.execute_sql(sql, params=[id, datetime.now(), state])
-
-    @staticmethod
-    def update_status_alle_lampen(status):
-        sql = "UPDATE lampen SET status = %s"
-        params = [status]
-        return Database.execute_sql(sql, params)
     
     @staticmethod
     def get_power_usage():

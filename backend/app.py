@@ -9,9 +9,28 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 
 
+####### Callback functions
+
+def pulse(pin):
+    starttime = time.monotonic()
+    global lasttime
+    while GPIO.input(pin):
+        if time.monotonic() - starttime > 0.01:
+            # print("pulse")
+            # DataRepository.
+            tijd = time.monotonic() - lasttime
+            wH = 3600 / tijd
+            print(f"tijd {tijd}")
+            print(f"wH: {wH}wH")
+            lasttime = time.monotonic()
+            return
+    # print("FILTER")
+
+
 def button(pin):
     pass
 
+#######
 
 ####### Pins define
 pinServo = 21
