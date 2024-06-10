@@ -41,11 +41,14 @@ try:
         print(west)
         print(oost)
         hoek = 2.5 + 10 * (180*convert_percentage(((west-oost)*3)+1023)) / 180
-        # hoek = 2.5 + 10 * (180*convert_percentage(((0.5))+1023)) / 180
+
+     
         servo.ChangeDutyCycle(hoek)
         time.sleep(0.1)
 except Exception as e:
     print(e)
     mcp_obj.closepi()
+    GPIO.cleanup()
+finally:
     GPIO.cleanup()
     
