@@ -49,6 +49,7 @@ class DataRepository:
                 ON
                     DeviceHistory.date >= intervals.start_interval 
                     AND DeviceHistory.date < intervals.end_interval
+                    AND DeviceHistory.deviceid = 5
                 GROUP BY
                     intervals.start_interval
                 ORDER BY
@@ -77,6 +78,7 @@ class DataRepository:
                 ON
                     DeviceHistory.date >= intervals.start_interval 
                     AND DeviceHistory.date < intervals.end_interval
+                    AND DeviceHistory.deviceid = 5
                 GROUP BY
                     intervals.start_interval
                 ORDER BY
