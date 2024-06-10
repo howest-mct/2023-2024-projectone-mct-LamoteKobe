@@ -4,24 +4,43 @@ from repositories.DataRepository import DataRepository
 from flask import Flask, jsonify
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
-
+from repositories.MCP import MCP
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 
-devicePins = [0, 0, 0, 0, 0, 0, 0, 17, 27, 22]
 
-GPIO.setup(devicePins[7], GPIO.OUT)
-GPIO.setup(devicePins[8], GPIO.OUT)
-GPIO.setup(devicePins[9], GPIO.OUT)
+def button(pin):
+    pass
 
-from repositories.MCP import MCP
+
+####### Pins define
+pinServo = 21
+pinButton = 22
+
+pinLed1 = 14
+pinLed2 = 15
+pinLed3 = 18
+
+pinRelais = 17
+
+# Pins setup
+GPIO.setup(pinServo, GPIO.OUT)
+servo = GPIO.PWM(pinServo, 50)
+
+GPIO.setup(pinButton, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(pinButton, GPIO.FALLING, callback=button, bouncetime=200)
+
+GPIO.setup(pinLed1, GPIO.OUT)
+GPIO.setup(pinLed2, GPIO.OUT)
+GPIO.setup(pinLed3, GPIO.OUT)
+
+GPIO.setup(pinRelais, GPIO.OUT)
+
+
+
+
 mcp_obj = MCP(0, 0)
 
-
-# TODO: GPIO
-
-
-# ///// CONFIG \\\\\ #
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'HELLOTHISISSCERET'
@@ -32,48 +51,28 @@ socketio = SocketIO(app, cors_allowed_origins="*",
 CORS(app)
 
 
-# ///// MAIN \\\\\ #
-
-pinServo = 21
-pinButton = 20
-
-mcp_obj = MCP(0, 0)
-
-def button(pin):
-    buttonPress = not GPIO.input(pinButton)
-    delay = time.time()
-    while buttonPress:
-        buttonPress = not GPIO.input(pinButton)
-        if time.time() > (delay + 2):
-            print("uit")
-            return
-    print("show ip")
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(pinServo, GPIO.OUT)
-GPIO.setup(pinButton, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.add_event_detect(pinButton, GPIO.FALLING, callback=button, bouncetime=200)
-
-servo = GPIO.PWM(pinServo, 50)
-servo.start(0)
-
-def convert_percentage(data):
-    percentage = (data)/float(2046)
-    return percentage
-
 def main():
-    try:
-        while True:
-            oost = mcp_obj.read_channel(0)
-            west = mcp_obj.read_channel(1)
-            mult = 3
-            hoek = 2.5 + 10 * (180*convert_percentage(((oost-west)*mult)+1023)) / 180
-            servo.ChangeDutyCycle(hoek)
-            time.sleep(0.1)
-    except Exception as e:
-        print(e)
-        mcp_obj.closepi()
-        GPIO.cleanup()
+    sun_last_state = ""
+    while True:
+        oost = mcp_obj.read_channel(0)
+        west = mcp_obj.read_channel(1)
+        DataRepository.write_ldr(oost, west)
+        if -50 < (west-oost) < 50:
+            sun_state = "zuid"
+        elif west > oost:
+            sun_state = "oost"
+        else:
+            sun_state = "west"
+
+        if sun_last_state != sun_state:
+            socketio.emit("B2F_sunpos", {"pos": sun_state})
+            sun_last_state = sun_state
+
+        print(sun_last_state)
+        
+        time.sleep(1)
+
+
 
 
 def start_thread():
@@ -88,40 +87,15 @@ def start_thread():
 def hallo():
     return "Server is running, er zijn momenteel geen API endpoints beschikbaar."
 
-@app.route('/api/v1/power/')
-def get_power():
-    return DataRepository.get_power_usage(), 200
-
 
 # SOCKET IO
 @socketio.on('connect')
 def initial_connection():
     print('A new client connect')
 
-    status = DataRepository.read_status_lampen()
-    emit('B2F_status_lampen', {'lampen': status}, broadcast=False)
-
-
-@socketio.on('F2B_switch_light')
-def switch_light(data):
-    print('licht gaat aan/uit', data)
-    lamp_id = data['lamp_id']
-    new_status = data['new_status']
-    # spreek de hardware aan
-    # stel de status in op de DB
-    res = DataRepository.update_status_lamp(lamp_id, new_status)
-    print(res)
-    # vraag de (nieuwe) status op van de lamp
-    data = DataRepository.read_status_lamp_by_id(lamp_id)
-    socketio.emit('B2F_verandering_lamp',  {'lamp': data})
-    # Indien het om de lamp van de TV kamer gaat, dan moeten we ook de hardware aansturen.
-    if lamp_id == '3':
-        print(f"TV kamer moet switchen naar {new_status} !")
-        # Do something
-
 @socketio.on('F2B_deviceState')
 def test(data):
-    GPIO.output(devicePins[int(data["id"])], int(data["state"]))
+    # GPIO.output(devicePins[int(data["id"])], int(data["state"]))
     socketio.emit('B2F_deviceUpdate', { "id": data["id"], "state": int(not int(data["state"]))})
     DataRepository.write_device_state(data["id"], data["state"])
     
