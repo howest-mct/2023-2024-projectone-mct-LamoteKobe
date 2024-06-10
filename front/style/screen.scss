@@ -79,6 +79,7 @@ h2 {
   // width: 100vw;
   max-width: 64rem;
   padding: 1rem;
+  margin: auto;
 }
 
 /*---------------------------------------/*
@@ -155,6 +156,32 @@ h2 {
   margin: auto;
   padding-top: 2rem;
   max-width: 48rem;
+}
+
+.c-home {
+  padding-top: 3rem;
+  display: flex;
+  gap: 1rem;
+
+  &__item {
+    background-color: $bg-white;
+    border-radius: 1rem;
+    flex-grow: 1;
+    text-align: center;
+    padding: 4rem 0;
+    max-width: calc(64rem / 3);
+    color: $btn-color;
+
+    &:hover {
+      background-color: #f4f6facb;
+    }
+  }
+
+  &__ac {}
+
+  &__oven {}
+
+  &__washing {}
 }
 
 .c-text {
@@ -304,6 +331,7 @@ h2 {
       height: auto;
       border-radius: 1rem;
       background-color: $bg-white;
+      fill: black;
     }
   }
 }

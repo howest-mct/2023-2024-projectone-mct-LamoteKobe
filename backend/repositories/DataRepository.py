@@ -25,7 +25,10 @@ class DataRepository:
         Database.execute_sql(sql, params=[id, datetime.now(), state])
     
     @staticmethod
-    def get_power_usage(scale):            
+    def get_power_usage(scale):       
+
+        sql_constant = "SELECT constant FROM Device WHERE DeviceID = 5;"
+        constant = Database.get_one_row(sql_constant)
 
         sql_hour = """
                 WITH RECURSIVE intervals AS (
@@ -114,13 +117,15 @@ class DataRepository:
             """
         
         if scale == 1:
-            return Database.get_rows(sql_hour)
+            result = Database.get_rows(sql_hour)
         elif scale == 2:
-            return Database.get_rows(sql_day)
+            result = Database.get_rows(sql_day)
         elif scale == 3:
-            return Database.get_rows(sql_week)
+            result = Database.get_rows(sql_week)
         else:
             return 0
+        
+        return {"constant": constant, "values": result}
     
 
     @staticmethod
