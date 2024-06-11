@@ -101,4 +101,19 @@ Actiepunten:
 - Transistors aanpassen, met ground ipv voeding
 - Issues aanmaken en toevoegen aan board
 
+  ## Toermoment 2 (Datum 04/06/2024)
 
+Lector: Dieter Roobrouck, Claudia Eeckhout, Geert Desloovere
+
+- Schakeling: vergelijking om pos zonnepaneel te bepalen is wat raar, als paneel draajt zit je met schaduw, normaal (vanboven), lichtsensor met buisje ervoor (klein kijkgaatje) --> gerichter zoeken. Maar is prototype
+- Data in database: puls al in database, nog geen berekeningen.
+- Energie via pulsen? Historiek van pulsen? Hoe ga je pulsen van gisteren bekijken
+- Schudden wegwerken: alleen sturen als ie moet gestuurd worden (stuur hem iedere 5sec)
+- Instructables: fotos plaatsen
+
+## Gesprek 3 (Datum 10/06/2024)
+
+Lector: Christophe
+
+Vragen voor dit gesprek:
+- Resolving conflicts
