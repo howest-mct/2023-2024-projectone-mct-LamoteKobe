@@ -12,6 +12,7 @@
 *.mpeg
 *.m4v
 *.3gp
+*.css
 
 # Exception: Unignore a specific video
 # !important_presentation.mp4  # This line overrides the general rule; uncomment to make active
