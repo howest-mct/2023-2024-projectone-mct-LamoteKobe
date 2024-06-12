@@ -328,6 +328,7 @@ h2 {
 
 
     &__item {
+      padding: 0.5rem;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -339,6 +340,7 @@ h2 {
       border-radius: 1rem;
       background-color: $bg-white;
       fill: black;
+      max-width: 63rem;
     }
   }
 }
