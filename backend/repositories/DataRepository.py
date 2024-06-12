@@ -14,27 +14,26 @@ class DataRepository:
 
     @staticmethod
     def write_ldr(oost, west):
-        sql = 'insert into History (DeviceID, Date, Value) values (%s, %s, %s) '
+        sql = 'insert into DeviceHistory (DeviceID, Date, Value) values (%s, %s, %s) '
         # Database.execute_sql(sql, params=[1, datetime.now(), oost])
         # Database.execute_sql(sql, params=[2, datetime.now(), west])
 
 
     @staticmethod
     def write_device_state(id, state):
-        sql = 'insert into History (DeviceID, Date, Value) values (%s, %s, %s)'
+        sql = 'insert into DeviceHistory (DeviceID, Date, Value) values (%s, %s, %s)'
         Database.execute_sql(sql, params=[id, datetime.now(), state])
     
     @staticmethod
     def get_power_usage(scale):       
 
-        sql_constant = "SELECT constant FROM Device WHERE DeviceID = 5;"
-        constant = Database.get_one_row(sql_constant)
+        sql_constant = "SELECT constant FROM Device WHERE DeviceID = %s;"
 
         sql_hour = """
                 WITH RECURSIVE intervals AS (
                     SELECT 
                         NOW() - INTERVAL 1 HOUR AS start_interval, 
-                        DATE_ADD(NOW() - INTERVAL 10 MINUTE, INTERVAL 10 MINUTE) AS end_interval
+                        DATE_ADD(NOW() - INTERVAL 1 HOUR, INTERVAL 10 MINUTE) AS end_interval
                     UNION ALL
                     SELECT 
                         start_interval + INTERVAL 10 MINUTE, 
@@ -52,13 +51,12 @@ class DataRepository:
                 ON
                     DeviceHistory.date >= intervals.start_interval 
                     AND DeviceHistory.date < intervals.end_interval
-                    AND DeviceHistory.deviceid = 5
+                    AND DeviceHistory.deviceid = %s
                 GROUP BY
                     intervals.start_interval
                 ORDER BY
                     intervals.start_interval asc;
             """
-
         sql_day = """
                 WITH RECURSIVE intervals AS (
                     SELECT 
@@ -81,7 +79,7 @@ class DataRepository:
                 ON
                     DeviceHistory.date >= intervals.start_interval 
                     AND DeviceHistory.date < intervals.end_interval
-                    AND DeviceHistory.deviceid = 5
+                    AND DeviceHistory.deviceid = %s
                 GROUP BY
                     intervals.start_interval
                 ORDER BY
@@ -109,7 +107,7 @@ class DataRepository:
                 ON
                     DeviceHistory.date >= intervals.start_interval 
                     AND DeviceHistory.date < intervals.end_interval
-                    AND DeviceHistory.deviceid = 5
+                    AND DeviceHistory.deviceid = %s
                 GROUP BY
                     intervals.start_interval
                 ORDER BY
@@ -117,15 +115,21 @@ class DataRepository:
             """
         
         if scale == 1:
-            result = Database.get_rows(sql_hour)
+            solar = {"constant": Database.get_one_row(sql_constant, params=[4]), "values": Database.get_rows(sql_hour, params=[4])}
+            eco = {"constant": Database.get_one_row(sql_constant, params=[5]), "values": Database.get_rows(sql_hour, params=[5])}
+            grid = {"constant": Database.get_one_row(sql_constant, params=[6]), "values": Database.get_rows(sql_hour, params=[6])}
         elif scale == 2:
-            result = Database.get_rows(sql_day)
+            solar = {"constant": Database.get_one_row(sql_constant, params=[4]), "values": Database.get_rows(sql_day, params=[4])}
+            eco = {"constant": Database.get_one_row(sql_constant, params=[5]), "values": Database.get_rows(sql_day, params=[5])}
+            grid = {"constant": Database.get_one_row(sql_constant, params=[6]), "values": Database.get_rows(sql_day, params=[6])}
         elif scale == 3:
-            result = Database.get_rows(sql_week)
+            solar = {"constant": Database.get_one_row(sql_constant, params=[4]), "values": Database.get_rows(sql_week, params=[4])}
+            eco = {"constant": Database.get_one_row(sql_constant, params=[5]), "values": Database.get_rows(sql_week, params=[5])}
+            grid = {"constant": Database.get_one_row(sql_constant, params=[6]), "values": Database.get_rows(sql_week, params=[6])}
         else:
             return 0
         
-        return {"constant": constant, "values": result}
+        return {"solar": solar, "eco": eco, "grid": grid}
     
 
     @staticmethod
@@ -134,6 +138,6 @@ class DataRepository:
             id = 5
         elif pin == 6:
             id = 4
-        sql = "insert into History (DeviceID, Date) values (%s, %s)"
+        sql = "insert into DeviceHistory (DeviceID, Date) values (%s, %s)"
         Database.execute_sql(sql, params=[id, datetime.now()])
 

@@ -112,7 +112,7 @@ h2 {
 }
 
 .c-nav {
-  margin: 0 auto;
+  margin: 1rem auto;
   max-width: 15.5rem;
   padding: 0.25rem;
   border-radius: 1rem;
@@ -177,11 +177,11 @@ h2 {
     }
   }
 
-  &__ac {}
+  // &__ac {}
 
-  &__oven {}
+  // &__oven {}
 
-  &__washing {}
+  // &__washing {}
 }
 
 .c-text {
@@ -314,12 +314,18 @@ h2 {
   }
 
   &__graph {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 1rem;
-    align-self: stretch;
+    width: 100%;
+
+    &__flex {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      align-self: stretch;
+    }
+
 
     &__item {
       display: flex;
@@ -328,7 +334,8 @@ h2 {
       flex: 1 0 0;
       align-self: stretch;
       flex-basis: 10rem;
-      height: auto;
+      width: 100%;
+      min-width: 18rem;
       border-radius: 1rem;
       background-color: $bg-white;
       fill: black;

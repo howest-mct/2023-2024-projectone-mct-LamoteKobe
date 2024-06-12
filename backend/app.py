@@ -63,6 +63,9 @@ GPIO.setup(pinLed3, GPIO.OUT)
 GPIO.setup(pinRelais, GPIO.OUT)
 
 GPIO.output(pinRelais, 1)
+GPIO.output(pinLed1, 1)
+GPIO.output(pinLed3, 1)
+GPIO.output(pinLed2, 1)
 
 
 

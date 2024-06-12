@@ -1385,17 +1385,19 @@
         </li>
       </ul>
       <select class="c-history__date js-period" name="date" id="date">
-        <option value="1">Hour</option>
-        <option value="2">Day</option>
-        <option value="3">Week</option>
-        <!-- <option value="month">Month</option>
-        <option value="year">Year</option> -->
+        <option value=1 selected>Hour</option>
+        <option value=2>Day</option>
+        <option value=3>Week</option>
       </select>
     </div>
     <div class="c-history__graph">
-      <div class="c-history__graph__item js-chart-solar">
+      <div class="c-history__graph__flex">
+        <div class="c-history__graph__item js-chart-solar">
+        </div>
+        <div class="c-history__graph__item js-chart-grid">
+        </div>
       </div>
-      <div class="c-history__graph__item js-chart-grid">
+      <div class="c-history__graph__item js-chart-combined">
       </div>
     </div>
   </div>
