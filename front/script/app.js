@@ -2,29 +2,242 @@ const lanIP = `${window.location.hostname}:5000`;
 // const socketio = io(lanIP);
 
 
-let htmlBtnHome, htmlBtnHistory, htmlHistory;
-let chartSolar, chartGrid, chartCombined;
+let htmlBtnHome, htmlBtnHistory, htmlHistory, htmlInputPeriod;
+let htmlChartSolar, htmlChartGrid, htmlChartCombined;
+
+let eco = []
+let solar = []
+let grid = []
+let period = []
+
+let chartSolar, chartGrid, chartCombined
 
 const listenToUI = function () {
   htmlBtnHistory.addEventListener('click', function () {
     htmlBtnHome.classList.remove('c-nav__active');
     htmlBtnHistory.classList.add('c-nav__active');
     htmlHistory.classList.remove('c-hidden');
+    htmlHome.classList.add('c-hidden');
+
+    console.log(lanIP)
+    handleData(`http://${lanIP}/api/v1/power/1/`, showGraph)
+
+
   });
   htmlBtnHome.addEventListener('click', function () {
     htmlBtnHistory.classList.remove('c-nav__active');
     htmlBtnHome.classList.add('c-nav__active');
     htmlHistory.classList.add('c-hidden');
+    htmlHome.classList.remove('c-hidden');
   });
 };
 
+const showGraph = function(jsonObj){
+  for(const i of jsonObj.eco.values){
+    eco.push(Math.round((i.count * jsonObj.eco.constant.constant)))
+    period.push(i.time)
+  }
+  for(const i of jsonObj.grid.values){
+    grid.push(Math.round((i.count * jsonObj.grid.constant.constant)))
+  }
+  for(const i of jsonObj.solar.values){
+    solar.push(Math.round((i.count * jsonObj.solar.constant.constant)))
+  }
+
+  let gridOptions = {
+    colors:['#4A90E2'],
+    dataLabels: {
+      enabled: true,
+    },
+    chart: {
+      type: 'area',
+      toolbar: {
+        show: false,
+      },
+    },
+    series: [
+      {
+        name: 'Wh',
+        data: grid
+      },
+    ],
+    xaxis: {
+      categories: period,
+      labels: {
+        show: false,
+      },
+    },
+    yaxis: {
+      min: 0,
+      max: Math.max(...grid, ...solar, ...eco) * 1.1,
+      show: false,
+    },
+  };
+  let solarOptions = {
+    colors:['#4CAF50'],
+    dataLabels: {
+      enabled: true,
+    },
+    chart: {
+      type: 'area',
+      toolbar: {
+        show: false,
+      },
+    },
+    series: [
+      {
+        name: 'Wh',
+        data: solar
+      },
+    ],
+    xaxis: {
+      categories: period,
+      labels: {
+        show: false,
+      },
+    },
+    yaxis: {
+      min: 0,
+      max: Math.max(...grid, ...solar, ...eco) * 1.1,
+      show: false,
+    },
+  };
+  let combinedOptions = {
+    colors:['#4CAF50', '#4A90E2', '#E3D35F'],
+    dataLabels: {
+      enabled: true,
+    },
+    chart: {
+      type: 'area',
+      toolbar: {
+        show: false,
+      },
+    },
+    series: [
+      {
+        name: 'Wh',
+        data: solar
+      },
+      {
+        name: 'Wh',
+        data: grid
+      },
+      {
+        name: 'Wh',
+        data: eco
+      },
+    ],
+    xaxis: {
+      categories: period,
+      labels: {
+        show: false,
+      },
+    },
+    yaxis: {
+      min: 0,
+      max: Math.max(...grid, ...solar, ...eco) * 1.1,
+      show: false,
+    },
+    legend:{
+      show: false
+    }
+  };
+
+  chartGrid = new ApexCharts(htmlChartGrid, gridOptions);
+  chartGrid.render();
+  chartSolar = new ApexCharts(htmlChartSolar, solarOptions);
+  chartSolar.render();
+  chartCombined = new ApexCharts(htmlChartCombined, combinedOptions);
+  chartCombined.render();
+}
+
+const updateGraph = function(jsonObj){
+  eco = []
+  solar = []
+  grid = []
+  period = []
+  for(const i of jsonObj.eco.values){
+    eco.push(Math.round((i.count * jsonObj.eco.constant.constant)))
+    period.push(i.time)
+  }
+  for(const i of jsonObj.grid.values){
+    grid.push(Math.round((i.count * jsonObj.grid.constant.constant)))
+  }
+  for(const i of jsonObj.solar.values){
+    solar.push(Math.round((i.count * jsonObj.solar.constant.constant)))
+  }
+  chartGrid.updateOptions({
+    series: [
+      {
+        name: 'Wh',
+        data: grid
+      },
+    ],
+    xaxis: {
+      categories: period,
+      labels: {
+        show: false
+      }
+    },
+    yaxis: {
+      min: 0,
+      max: Math.max(...grid, ...solar, ...eco) * 1.1,
+      show: false
+    }
+  })
+  chartSolar.updateOptions({
+    series: [
+      {
+        name: 'Wh',
+        data: solar
+      },
+    ],
+    xaxis: {
+      categories: period,
+      labels: {
+        show: false
+      }
+    },
+    yaxis: {
+      min: 0,
+      max: Math.max(...grid, ...solar, ...eco) * 1.1,
+      show: false
+    }
+  })
+  chartCombined.updateOptions({
+    series: [
+      {
+        name: 'Wh',
+        data: solar
+      },
+      {
+        name: 'Wh',
+        data: grid
+      },
+      {
+        name: 'Wh',
+        data: eco
+      },
+    ],
+    xaxis: {
+      categories: period,
+      labels: {
+        show: false
+      }
+    },
+    yaxis: {
+      min: 0,
+      max: Math.max(...grid, ...solar, ...eco) * 1.1,
+      show: false
+    }
+  })
+}
+
 
 const listenToButtons = function(){
-  for(const i of htmlButtons){
-    i.addEventListener('click', function(){
-      socketio.emit('F2B_deviceState', { id: this.getAttribute('data-id'), state: this.getAttribute('data-state')})
-    })
-  }
+  htmlInputPeriod.addEventListener('input', function(){
+    handleData(`http://${lanIP}/api/v1/power/${this.value}/`, updateGraph)
+  })
 }
 
 const listenToSocket = function () {
@@ -45,36 +258,10 @@ const listenToSocket = function () {
   })
 };
 
-const getCharts = function () {
-  var options = {
-    dataLabels: {
-      enabled: true,
-    },
-    chart: {
-      type: 'area',
-      toolbar: {
-        show: false,
-      },
-    },
-    series: [
-      {
-        name: 'kW',
-        data: ['10kWh', '20', '16kWh', 10, 5],
-      },
-    ],
-    xaxis: {
-      categories: ['15:00', '16:00', '17:00', '18:00', '19:00'],
-      labels: {
-        show: false,
-      },
-    },
-    yaxis: {
-      show: false,
-    },
-  };
+const getCharts = function (options) {
+  
 
-  var chart = new ApexCharts(chartGrid, options);
-  chart.render();
+
 };
 
 const init = function () {
@@ -82,18 +269,22 @@ const init = function () {
 
 
   htmlHistory = document.querySelector('.js-history');
+  htmlHome = document.querySelector('.js-home')
 
   htmlBtnHome = document.querySelector('.js-btn-home');
   htmlBtnHistory = document.querySelector('.js-btn-history');
 
-  chartSolar = document.querySelector('.js-chart-solar');
-  chartGrid = document.querySelector('.js-chart-grid');
-  // chartCombined = document.querySelector('.js-char-combined')
+  htmlInputPeriod = document.querySelector('.js-period');
+
+  htmlChartSolar = document.querySelector('.js-chart-solar');
+  htmlChartGrid = document.querySelector('.js-chart-grid');
+  htmlChartCombined = document.querySelector('.js-chart-combined')
 
 
   listenToUI();
   // listenToSocket();
-  getCharts();
+
+  listenToButtons();
 };
 
 document.addEventListener('DOMContentLoaded', init);
