@@ -37,8 +37,6 @@ const listenToUI = function () {
 
   for(const buttn of htmlAppliances){
     buttn.addEventListener('click', function(){
-      // console.log(!parseInt(this.getAttribute('data-state')))
-      // this.setAttribute('data-state', !parseInt(this.getAttribute('data-state')))
       socketio.emit("F2B_appliance", {"appliance":this.getAttribute("data-id"), "state":this.getAttribute('data-state')})
     })
   }
@@ -263,7 +261,6 @@ const listenToSocket = function () {
   });
 
   socketio.on('B2F_appliance', function(jsonObj){
-    console.log(jsonObj)
     for(const buttn of htmlAppliances){
       if(buttn.getAttribute('data-id') == jsonObj.id){
         if (jsonObj.state){
