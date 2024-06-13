@@ -32,6 +32,10 @@ const listenToUI = function () {
     htmlHome.classList.remove('c-hidden');
   });
 
+  htmlInputPeriod.addEventListener('input', function(){
+    handleData(`http://${lanIP}/api/v1/power/${this.value}/`, updateGraph)
+  })
+
   for(const buttn of htmlAppliances){
     buttn.addEventListener('click', function(){
       socketio.emit("F2B_appliance", {"appliance":this.getAttribute("data-id")})
@@ -240,13 +244,6 @@ const updateGraph = function(jsonObj){
   })
 }
 
-
-const listenToButtons = function(){
-  htmlInputPeriod.addEventListener('input', function(){
-    handleData(`http://${lanIP}/api/v1/power/${this.value}/`, updateGraph)
-  })
-}
-
 const listenToSocket = function () {
   socketio.on('connect', function () {
     console.log('verbonden met socket webserver');
@@ -266,7 +263,6 @@ const listenToSocket = function () {
 const init = function () {
   console.info('DOM geladen');
 
-
   htmlHistory = document.querySelector('.js-history');
   htmlHome = document.querySelector('.js-home')
 
@@ -285,7 +281,6 @@ const init = function () {
   listenToUI();
   listenToSocket();
 
-  listenToButtons();
 };
 
 document.addEventListener('DOMContentLoaded', init);
