@@ -19,12 +19,9 @@ class DataRepository:
         # Database.execute_sql(sql, params=[2, datetime.now(), west])
 
     @staticmethod
-    def write_appliance(id):
-        sql = 'SELECT value FROM demo_homecontrol.DeviceHistory where deviceid = %s order by date desc limit 1;'
-        value = Database.get_one_row(sql, params=[id])["value"]
+    def write_appliance(id, state):
         sql = 'insert into DeviceHistory (DeviceID, Date, Value) values (%s, %s, %s)'
-        Database.execute_sql(sql, params=[id, datetime.now(), not value])
-        return not value
+        Database.execute_sql(sql, params=[id, datetime.now(), state])
 
 
     
@@ -144,4 +141,19 @@ class DataRepository:
             id = 4
         sql = "insert into DeviceHistory (DeviceID, Date) values (%s, %s)"
         Database.execute_sql(sql, params=[id, datetime.now()])
+
+    @staticmethod
+    def get_appliances():
+        sql = 'SELECT Value FROM demo_homecontrol.DeviceHistory where deviceid = 9 order by date desc limit 1;'
+        oven = Database.get_one_row(sql)
+        sql = 'SELECT Value FROM demo_homecontrol.DeviceHistory where deviceid = 8 order by date desc limit 1;'
+        ac = Database.get_one_row(sql)
+        sql = 'SELECT Value FROM demo_homecontrol.DeviceHistory where deviceid = 7 order by date desc limit 1;'
+        wash = Database.get_one_row(sql)
+
+        return {
+           "data":[{"id": 9, "value": oven["Value"]}, {"id": 8, "value": ac["Value"]}, {"id": 7, "value": wash["Value"]}]
+        }
+
+        
 
