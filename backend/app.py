@@ -42,6 +42,12 @@ pinLed1 = 14
 pinLed2 = 15
 pinLed3 = 18
 
+ledIds = {
+    7: pinLed1,
+    8: pinLed2,
+    9: pinLed3
+}
+
 pinRelais = 17
 
 # Pins setup
@@ -63,9 +69,9 @@ GPIO.setup(pinLed3, GPIO.OUT)
 GPIO.setup(pinRelais, GPIO.OUT)
 
 GPIO.output(pinRelais, 1)
-GPIO.output(pinLed1, 1)
-GPIO.output(pinLed3, 1)
-GPIO.output(pinLed2, 1)
+GPIO.output(pinLed1, 0)
+GPIO.output(pinLed3, 0)
+GPIO.output(pinLed2, 0)
 
 
 
@@ -137,11 +143,12 @@ def power(scale):
 def initial_connection():
     print('A new client connect')
 
-@socketio.on('F2B_deviceState')
-def test(data):
-    # GPIO.output(devicePins[int(data["id"])], int(data["state"]))
-    socketio.emit('B2F_deviceUpdate', { "id": data["id"], "state": int(not int(data["state"]))})
-    DataRepository.write_device_state(data["id"], data["state"])
+
+@socketio.on('F2B_appliance')
+def initial_connection(obj):
+    state = DataRepository.write_appliance(obj["appliance"])
+    GPIO.output(ledIds[int(obj["appliance"])], state)
+    socketio.emit('B2F_appliance', {"id": obj["appliance"], "state": state})
     
 
 if __name__ == '__main__':

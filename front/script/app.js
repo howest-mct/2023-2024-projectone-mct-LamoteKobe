@@ -1,16 +1,17 @@
 const lanIP = `${window.location.hostname}:5000`;
-// const socketio = io(lanIP);
+const socketio = io(lanIP);
 
 
 let htmlBtnHome, htmlBtnHistory, htmlHistory, htmlInputPeriod;
 let htmlChartSolar, htmlChartGrid, htmlChartCombined;
+let chartSolar, chartGrid, chartCombined
+
+let htmlAppliances
 
 let eco = []
 let solar = []
 let grid = []
 let period = []
-
-let chartSolar, chartGrid, chartCombined
 
 const listenToUI = function () {
   htmlBtnHistory.addEventListener('click', function () {
@@ -30,6 +31,12 @@ const listenToUI = function () {
     htmlHistory.classList.add('c-hidden');
     htmlHome.classList.remove('c-hidden');
   });
+
+  for(const buttn of htmlAppliances){
+    buttn.addEventListener('click', function(){
+      socketio.emit("F2B_appliance", {"appliance":this.getAttribute("data-id")})
+    })
+  }
 };
 
 const showGraph = function(jsonObj){
@@ -245,21 +252,13 @@ const listenToSocket = function () {
     console.log('verbonden met socket webserver');
   });
 
-  socketio.on('B2F_deviceUpdate', function(jsonObj){
-    for(const i of htmlButtons){
-      if(i.getAttribute('data-id') == jsonObj.id){
-        i.setAttribute('data-state', jsonObj.state)
+  socketio.on('B2F_appliance', function(jsonObj){
+    for(const buttn of htmlAppliances){
+      if(buttn.getAttribute('data-id') == jsonObj.id){
+        // add classlist opmaak
       }
     }
   })
-
-  socketio.on('B2F_sunpos', function(jsonObj){
-    document.querySelector('.js-sun').innerHTML = jsonObj.pos
-  })
-};
-
-const getCharts = function (options) {
-  
 
 
 };
@@ -280,9 +279,11 @@ const init = function () {
   htmlChartGrid = document.querySelector('.js-chart-grid');
   htmlChartCombined = document.querySelector('.js-chart-combined')
 
+  htmlAppliances = document.querySelectorAll('.js-appliance')
+
 
   listenToUI();
-  // listenToSocket();
+  listenToSocket();
 
   listenToButtons();
 };
