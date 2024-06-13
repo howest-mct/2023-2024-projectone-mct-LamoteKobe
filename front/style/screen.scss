@@ -158,22 +158,31 @@ h2 {
   max-width: 48rem;
 }
 
+
 .c-home {
   padding-top: 3rem;
   display: flex;
   gap: 1rem;
 
   &__item {
-    background-color: $bg-white;
+    background-color: $btn-color;
+    opacity: 50%;
     border-radius: 1rem;
     flex-grow: 1;
     text-align: center;
-    padding: 4rem 0;
+    // padding: 4rem 0;
     max-width: calc(64rem / 3);
     color: $btn-color;
 
-    &:hover {
-      background-color: #f4f6facb;
+    @media (hover: hover) {
+      &:hover {
+        background-color: #f4f6facb;
+      }
+    }
+
+    &__active {
+      opacity: 100%;
+      background-color: $bg-white;
     }
   }
 

@@ -255,7 +255,7 @@ const listenToSocket = function () {
   socketio.on('B2F_appliance', function(jsonObj){
     for(const buttn of htmlAppliances){
       if(buttn.getAttribute('data-id') == jsonObj.id){
-        // add classlist opmaak
+        buttn.classList.toggle("c-home__item__active")
       }
     }
   })

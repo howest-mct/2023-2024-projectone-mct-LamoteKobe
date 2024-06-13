@@ -18,11 +18,15 @@ class DataRepository:
         # Database.execute_sql(sql, params=[1, datetime.now(), oost])
         # Database.execute_sql(sql, params=[2, datetime.now(), west])
 
-
     @staticmethod
-    def write_device_state(id, state):
+    def write_appliance(id):
+        sql = 'SELECT value FROM demo_homecontrol.DeviceHistory where deviceid = %s order by date desc limit 1;'
+        value = Database.get_one_row(sql, params=[id])["value"]
         sql = 'insert into DeviceHistory (DeviceID, Date, Value) values (%s, %s, %s)'
-        Database.execute_sql(sql, params=[id, datetime.now(), state])
+        Database.execute_sql(sql, params=[id, datetime.now(), not value])
+        return not value
+
+
     
     @staticmethod
     def get_power_usage(scale):       
