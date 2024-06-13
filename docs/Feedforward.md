@@ -30,11 +30,6 @@
 
 > Herlees je notities en maak actiepunten. Maak keuzes uit alle feedback die je kreeg: Waar kan je mee aan de slag en wat laat je even rusten. Wat waren de prioriteiten? Neem de opdrachtfiche er nog eens bij om je focuspunten te bepalen. Noteer je actiepunten op de feedbackfiche.
 
-# Week 1
-## to do
-- [x] Setup Raspberry Pi
-- [x] Fritzing schema schakeling
-
 # Feedforward gesprekken
 
 ## Gesprek 1 (Datum: 24/05/2024)
@@ -101,7 +96,7 @@ Actiepunten:
 - Transistors aanpassen, met ground ipv voeding
 - Issues aanmaken en toevoegen aan board
 
-  ## Toermoment 2 (Datum 04/06/2024)
+## Toermoment 2 (Datum 04/06/2024)
 
 Lector: Dieter Roobrouck, Claudia Eeckhout, Geert Desloovere
 
@@ -117,3 +112,33 @@ Lector: Christophe
 
 Vragen voor dit gesprek:
 - Resolving conflicts
+
+## Toermoment 3 (Datum 11/06/2024)
+
+Lector: Pieter-Jan Beeckman, Stijn Walcarius, Frederik Waeyaert
+
+- Frontend: grafieken labels plaatsen op assen
+    Label die zeggen over welke data het gaat
+- Goed op schema, maar meer functionaliteit op de site + instructables
+
+## Gesprek 4 (Datum 13/06/2024)
+
+Lector: Dieter Roobrouck
+
+Vragen voor dit gesprek:
+- Scaling responsive voor mobile: kaders te klein? Alternatieven?
+- Breedte navigatie element niet gelijk. Mag dit?
+- Font Inter mogen gebruiken?
+- Hoe voeg ik labels toe op de grafieken zonder UI uitlijning te wijzigen.
+
+Dit is de feedback op mijn vragen:
+- Inderdaad zeer klein, op mobile best een tabel onder de animatie waar de waardes in het groot staan.
+  Opmerking: punt waar kabels samenkomen: niet wit, maak hier bv. zwart van
+- Valt niet op, mag blijven.
+  Opmerking: moeilijk te zien dat de pagina veranderd bij navigatie
+  Opmerking: Wat betekent Home in navigatie? -> Home veranderen naar Live
+- Inter mag, wel testen op andere pc
+- Niet nuttig om meerdere grafieken apart te tonen én gecombineerd. Maak hier één grafiek van met alle waarden die je afzonderlijk kan toggelen. Deze is dan ook groter waardoor labels minder met uitlijning veranderen
+
+
+
