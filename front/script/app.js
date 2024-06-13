@@ -20,11 +20,10 @@ const listenToUI = function () {
     htmlHistory.classList.remove('c-hidden');
     htmlHome.classList.add('c-hidden');
 
-    console.log(lanIP)
     handleData(`http://${lanIP}/api/v1/power/1/`, showGraph)
 
-
   });
+
   htmlBtnHome.addEventListener('click', function () {
     htmlBtnHistory.classList.remove('c-nav__active');
     htmlBtnHome.classList.add('c-nav__active');
@@ -38,10 +37,24 @@ const listenToUI = function () {
 
   for(const buttn of htmlAppliances){
     buttn.addEventListener('click', function(){
-      socketio.emit("F2B_appliance", {"appliance":this.getAttribute("data-id")})
+      // console.log(!parseInt(this.getAttribute('data-state')))
+      // this.setAttribute('data-state', !parseInt(this.getAttribute('data-state')))
+      socketio.emit("F2B_appliance", {"appliance":this.getAttribute("data-id"), "state":this.getAttribute('data-state')})
     })
   }
 };
+
+const showAppliances = function(jsonObj){
+
+  for(const i of jsonObj.data){
+    for(const buttn of htmlAppliances){
+      if(buttn.getAttribute('data-id') == i.id && i.value){
+        buttn.classList.add("c-home__item__active")
+        buttn.setAttribute('data-state', 1)
+      }
+    }
+  }
+}
 
 const showGraph = function(jsonObj){
   for(const i of jsonObj.eco.values){
@@ -250,9 +263,16 @@ const listenToSocket = function () {
   });
 
   socketio.on('B2F_appliance', function(jsonObj){
+    console.log(jsonObj)
     for(const buttn of htmlAppliances){
       if(buttn.getAttribute('data-id') == jsonObj.id){
-        buttn.classList.toggle("c-home__item__active")
+        if (jsonObj.state){
+          buttn.classList.add("c-home__item__active")
+        }
+        else{
+          buttn.classList.remove("c-home__item__active")
+        }
+        buttn.setAttribute('data-state', Number(jsonObj.state))
       }
     }
   })
@@ -276,6 +296,8 @@ const init = function () {
   htmlChartCombined = document.querySelector('.js-chart-combined')
 
   htmlAppliances = document.querySelectorAll('.js-appliance')
+
+  handleData(`http://${lanIP}/api/v1/appliances/`, showAppliances)
 
 
   listenToUI();

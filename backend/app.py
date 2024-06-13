@@ -136,6 +136,10 @@ def power(scale):
         return result, 200
     else:
         return jsonify("bad request"), 400
+    
+@app.route('/api/v1/appliances/')
+def appliance():
+    return DataRepository.get_appliances()
 
 
 # SOCKET IO
@@ -145,10 +149,10 @@ def initial_connection():
 
 
 @socketio.on('F2B_appliance')
-def initial_connection(obj):
-    state = DataRepository.write_appliance(obj["appliance"])
-    GPIO.output(ledIds[int(obj["appliance"])], state)
-    socketio.emit('B2F_appliance', {"id": obj["appliance"], "state": state})
+def appliance_update(obj):
+    DataRepository.write_appliance(obj["appliance"], not int(obj["state"]))
+    GPIO.output(ledIds[int(obj["appliance"])], not int(obj["state"]))
+    socketio.emit('B2F_appliance', {"id": obj["appliance"], "state": not int(obj["state"])})
     
 
 if __name__ == '__main__':
