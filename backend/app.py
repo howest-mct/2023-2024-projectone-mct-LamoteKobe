@@ -5,6 +5,7 @@ from flask import Flask, jsonify
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from repositories.MCP import MCP
+import random
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 
@@ -26,7 +27,7 @@ def pulse(pin):
             # print(f"wH: {wH}wH")
             # lasttime = time.monotonic()
             return
-    print("FILTER")
+    # print("FILTER")
 
     
 def button(pin):
@@ -47,6 +48,8 @@ ledIds = {
     8: pinLed2,
     9: pinLed3
 }
+
+ledCount = 0
 
 pinRelais = 17
 
@@ -98,9 +101,16 @@ def convert_percentage(data):
 
 
 def main():
+    global ledCount
+
     # init appliances to match database values
-    for i in DataRepository.get_appliances()["data"]:
-        GPIO.output(ledIds[i["id"]], i["value"])
+    try:
+        for i in DataRepository.get_appliances()["data"]:
+            global ledCount
+            ledCount += i["value"]
+            GPIO.output(ledIds[i["id"]], i["value"])
+    except Exception as ex:
+        print(ex)
 
     last_hoek = -5000
     try:
@@ -109,13 +119,19 @@ def main():
             west = mcp_obj.read_channel(1)
             hoek = (west - oost) * 3
             servoControl = 2.5 + 10 * (180*convert_percentage((hoek)+1023)) / 180
-            if not (last_hoek - 400 < hoek < last_hoek + 400):
-                servo.start(0)
-                servo.ChangeDutyCycle(servoControl)
-                time.sleep(0.5)
-                servo.stop()
-                last_hoek = hoek
+            # if not (last_hoek - 700 < hoek < last_hoek + 700):
+                # servo.start(0)
+                # servo.ChangeDutyCycle(servoControl)
+                # time.sleep(0.5)
+                # servo.stop()
+                # last_hoek = hoek
             time.sleep(2)
+
+            # simulate energymeter pulses based on how many appliances
+            if not random.randint(0, round(20 / (ledCount + 1))) and ledCount:
+                DataRepository.write_pulse(1)
+    
+
     except Exception as e:
         mcp_obj.closepi()
         GPIO.cleanup()
@@ -161,9 +177,14 @@ def initial_connection():
 
 @socketio.on('F2B_appliance')
 def appliance_update(obj):
-    DataRepository.write_appliance(obj["appliance"], not int(obj["state"]))
-    GPIO.output(ledIds[int(obj["appliance"])], not int(obj["state"]))
-    socketio.emit('B2F_appliance', {"id": obj["appliance"], "state": not int(obj["state"])})
+    global ledCount
+    if DataRepository.write_appliance(obj["appliance"], not int(obj["state"])):
+        if int(obj["state"]):
+            ledCount -=  1
+        else:
+            ledCount += 1
+        GPIO.output(ledIds[int(obj["appliance"])], not int(obj["state"]))
+        socketio.emit('B2F_appliance', {"id": obj["appliance"], "state": not int(obj["state"])})
     
 
 if __name__ == '__main__':

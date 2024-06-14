@@ -21,7 +21,7 @@ class DataRepository:
     @staticmethod
     def write_appliance(id, state):
         sql = 'insert into DeviceHistory (DeviceID, Date, Value) values (%s, %s, %s)'
-        Database.execute_sql(sql, params=[id, datetime.now(), state])
+        return Database.execute_sql(sql, params=[id, datetime.now(), state])
 
 
     
@@ -139,6 +139,8 @@ class DataRepository:
             id = 5
         elif pin == 6:
             id = 4
+        elif pin == 1:
+            id = 6
         sql = "insert into DeviceHistory (DeviceID, Date) values (%s, %s)"
         Database.execute_sql(sql, params=[id, datetime.now()])
 
@@ -151,9 +153,13 @@ class DataRepository:
         sql = 'SELECT Value FROM demo_homecontrol.DeviceHistory where deviceid = 7 order by date desc limit 1;'
         wash = Database.get_one_row(sql)
 
-        return {
-           "data":[{"id": 9, "value": oven["Value"]}, {"id": 8, "value": ac["Value"]}, {"id": 7, "value": wash["Value"]}]
-        }
+        try:
+            return {
+            "data":[{"id": 9, "value": oven["Value"]}, {"id": 8, "value": ac["Value"]}, {"id": 7, "value": wash["Value"]}]
+            }
+        except Exception as ex:
+            print(ex)
+            return 
 
         
 

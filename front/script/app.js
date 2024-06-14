@@ -65,65 +65,6 @@ const showGraph = function(jsonObj){
   for(const i of jsonObj.solar.values){
     solar.push(Math.round((i.count * jsonObj.solar.constant.constant)))
   }
-
-  let gridOptions = {
-    colors:['#4A90E2'],
-    dataLabels: {
-      enabled: true,
-    },
-    chart: {
-      type: 'area',
-      toolbar: {
-        show: false,
-      },
-    },
-    series: [
-      {
-        name: 'Wh',
-        data: grid
-      },
-    ],
-    xaxis: {
-      categories: period,
-      labels: {
-        show: false,
-      },
-    },
-    yaxis: {
-      min: 0,
-      max: Math.max(...grid, ...solar, ...eco) * 1.1,
-      show: false,
-    },
-  };
-  let solarOptions = {
-    colors:['#4CAF50'],
-    dataLabels: {
-      enabled: true,
-    },
-    chart: {
-      type: 'area',
-      toolbar: {
-        show: false,
-      },
-    },
-    series: [
-      {
-        name: 'Wh',
-        data: solar
-      },
-    ],
-    xaxis: {
-      categories: period,
-      labels: {
-        show: false,
-      },
-    },
-    yaxis: {
-      min: 0,
-      max: Math.max(...grid, ...solar, ...eco) * 1.1,
-      show: false,
-    },
-  };
   let combinedOptions = {
     colors:['#4CAF50', '#4A90E2', '#E3D35F'],
     dataLabels: {
@@ -164,11 +105,6 @@ const showGraph = function(jsonObj){
       show: false
     }
   };
-
-  chartGrid = new ApexCharts(htmlChartGrid, gridOptions);
-  chartGrid.render();
-  chartSolar = new ApexCharts(htmlChartSolar, solarOptions);
-  chartSolar.render();
   chartCombined = new ApexCharts(htmlChartCombined, combinedOptions);
   chartCombined.render();
 }
@@ -188,44 +124,6 @@ const updateGraph = function(jsonObj){
   for(const i of jsonObj.solar.values){
     solar.push(Math.round((i.count * jsonObj.solar.constant.constant)))
   }
-  chartGrid.updateOptions({
-    series: [
-      {
-        name: 'Wh',
-        data: grid
-      },
-    ],
-    xaxis: {
-      categories: period,
-      labels: {
-        show: false
-      }
-    },
-    yaxis: {
-      min: 0,
-      max: Math.max(...grid, ...solar, ...eco) * 1.1,
-      show: false
-    }
-  })
-  chartSolar.updateOptions({
-    series: [
-      {
-        name: 'Wh',
-        data: solar
-      },
-    ],
-    xaxis: {
-      categories: period,
-      labels: {
-        show: false
-      }
-    },
-    yaxis: {
-      min: 0,
-      max: Math.max(...grid, ...solar, ...eco) * 1.1,
-      show: false
-    }
-  })
   chartCombined.updateOptions({
     series: [
       {
