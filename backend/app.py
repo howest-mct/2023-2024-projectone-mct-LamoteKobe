@@ -88,29 +88,40 @@ socketio = SocketIO(app, cors_allowed_origins="*",
 CORS(app)
 
 
+def convert_percentage(data):
+    if -2046 >= data:
+        return 0
+    elif data >= 2046:
+        return 1
+    percentage = (data)/float(2046)
+    return percentage
+
+
 def main():
-    sun_last_state = ""
+    # init appliances to match database values
+    for i in DataRepository.get_appliances()["data"]:
+        GPIO.output(ledIds[i["id"]], i["value"])
+
+    last_hoek = -5000
     try:
         while True:
             oost = mcp_obj.read_channel(0)
             west = mcp_obj.read_channel(1)
-            DataRepository.write_ldr(oost, west)
-            if -50 < (west-oost) < 50:
-                sun_state = "zuid"
-            elif west > oost:
-                sun_state = "oost"
-            else:
-                sun_state = "west"
-
-            if sun_last_state != sun_state:
-                socketio.emit("B2F_sunpos", {"pos": sun_state})
-                sun_last_state = sun_state
-
-    except Exception as ex:
+            hoek = (west - oost) * 3
+            servoControl = 2.5 + 10 * (180*convert_percentage((hoek)+1023)) / 180
+            if not (last_hoek - 400 < hoek < last_hoek + 400):
+                servo.start(0)
+                servo.ChangeDutyCycle(servoControl)
+                time.sleep(0.5)
+                servo.stop()
+                last_hoek = hoek
+            time.sleep(2)
+    except Exception as e:
+        mcp_obj.closepi()
         GPIO.cleanup()
     finally:
         GPIO.output(pinRelais, 0)
-        time.sleep(3)
+        time.sleep(1)
         GPIO.cleanup()
 
 
@@ -127,7 +138,7 @@ def start_thread():
 # API ENDPOINTS
 @app.route('/')
 def hallo():
-    return "Server is running, er zijn momenteel geen API endpoints beschikbaar."
+    return "Server is running", 200
 
 @app.route('/api/v1/power/<scale>/')
 def power(scale):
@@ -164,6 +175,4 @@ if __name__ == '__main__':
         print('KeyboardInterrupt exception is caught')
         GPIO.cleanup()
     finally:
-        # GPIO.output(pinRelais, 0)
-        # time.sleep(3)
         GPIO.cleanup()
