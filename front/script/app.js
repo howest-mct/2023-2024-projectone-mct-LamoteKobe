@@ -55,6 +55,10 @@ const showAppliances = function(jsonObj){
 }
 
 const showGraph = function(jsonObj){
+  eco = []
+  solar = []
+  grid = []
+  period = []
   for(const i of jsonObj.eco.values){
     eco.push(Math.round((i.count * jsonObj.eco.constant.constant)))
     period.push(i.time)
