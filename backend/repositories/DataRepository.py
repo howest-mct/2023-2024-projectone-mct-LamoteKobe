@@ -18,11 +18,12 @@ class DataRepository:
         # Database.execute_sql(sql, params=[1, datetime.now(), oost])
         # Database.execute_sql(sql, params=[2, datetime.now(), west])
 
-
     @staticmethod
-    def write_device_state(id, state):
+    def write_appliance(id, state):
         sql = 'insert into DeviceHistory (DeviceID, Date, Value) values (%s, %s, %s)'
-        Database.execute_sql(sql, params=[id, datetime.now(), state])
+        return Database.execute_sql(sql, params=[id, datetime.now(), state])
+
+
     
     @staticmethod
     def get_power_usage(scale):       
@@ -138,6 +139,27 @@ class DataRepository:
             id = 5
         elif pin == 6:
             id = 4
+        elif pin == 1:
+            id = 6
         sql = "insert into DeviceHistory (DeviceID, Date) values (%s, %s)"
         Database.execute_sql(sql, params=[id, datetime.now()])
+
+    @staticmethod
+    def get_appliances():
+        sql = 'SELECT Value FROM demo_homecontrol.DeviceHistory where deviceid = 9 order by date desc limit 1;'
+        oven = Database.get_one_row(sql)
+        sql = 'SELECT Value FROM demo_homecontrol.DeviceHistory where deviceid = 8 order by date desc limit 1;'
+        ac = Database.get_one_row(sql)
+        sql = 'SELECT Value FROM demo_homecontrol.DeviceHistory where deviceid = 7 order by date desc limit 1;'
+        wash = Database.get_one_row(sql)
+
+        try:
+            return {
+            "data":[{"id": 9, "value": oven["Value"]}, {"id": 8, "value": ac["Value"]}, {"id": 7, "value": wash["Value"]}]
+            }
+        except Exception as ex:
+            print(ex)
+            return 
+
+        
 
