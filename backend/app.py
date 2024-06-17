@@ -1,37 +1,67 @@
 import threading
 import time
+from PIL import Image, ImageDraw
+from subprocess import check_output
 from repositories.DataRepository import DataRepository
 from flask import Flask, jsonify
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from repositories.MCP import MCP
+from repositories.oled import OLED
 import random
 import RPi.GPIO as GPIO
+import os
+from repositories.RTC import RTC
 GPIO.setmode(GPIO.BCM)
 
 
 ####### Callback functions
-
+lasttime = {
+    "solar": time.monotonic(),
+    "house": time.monotonic(),
+    "eco": time.monotonic()
+}
+lastpower = {
+    "solar": 0,
+    "house": 0,
+    "eco": 0
+}
+# measure pulse and write to db
+# filters out false pulses by waiting
 def pulse(pin):
     starttime = time.monotonic()
     global lasttime
-    while GPIO.input(pin):
-        if time.monotonic() - starttime > 0.01:
-            DataRepository.write_pulse(pin)
-            print("pulse")
-            # print(pin)
-            # DataRepository.write_pulse()
-            # tijd = time.monotonic() - lasttime
-            # wH = 3600 / tijd
-            # print(f"tijd {tijd}")
-            # print(f"wH: {wH}wH")
-            # lasttime = time.monotonic()
-            return
-    # print("FILTER")
+    global lastpower
+    if pin == 1:
+        name = DataRepository.write_pulse(pin)
+        power = 3600 / (time.monotonic() - lasttime[name])
+        socketio.emit("B2F_update_power", {"name": name, "power": power})
+        lastpower[name] = power
+        lasttime[name] = time.monotonic()
+    else:
+        while GPIO.input(pin):
+            if time.monotonic() - starttime > 0.01:
+                name = DataRepository.write_pulse(pin)
+                power = 3600 / (time.monotonic() - lasttime[name])
+                socketio.emit("B2F_update_power", {"name": name, "power": power})
+                lastpower[name] = power
+                lasttime[name] = time.monotonic()
+                return
 
     
 def button(pin):
-    pass
+    global oled
+    buttonPress = not GPIO.input(pinButton)
+    delay = time.time()
+    while buttonPress:
+        buttonPress = not GPIO.input(pinButton)
+        if time.time() > (delay + 2):
+            oled.display("Shutting down...")
+            os.system("sudo poweroff")
+            return
+    oled.display_network()
+    time.sleep(5)
+    oled.clear_display()
 
 #######
 
@@ -50,6 +80,7 @@ ledIds = {
 }
 
 ledCount = 0
+threshold = 1000
 
 pinRelais = 17
 
@@ -80,6 +111,11 @@ GPIO.output(pinLed2, 0)
 
 
 mcp_obj = MCP(0, 0)
+oled = OLED()
+
+# set time if no internet connection
+rtc = RTC()
+rtc.update()
 
 
 app = Flask(__name__)
@@ -90,9 +126,9 @@ socketio = SocketIO(app, cors_allowed_origins="*",
                     async_mode='gevent', ping_interval=0.5)
 CORS(app)
 
-
+# convert percentage for servo control
 def convert_percentage(data):
-    if -2046 >= data:
+    if 0 >= data:
         return 0
     elif data >= 2046:
         return 1
@@ -110,8 +146,9 @@ def main():
             ledCount += i["value"]
             GPIO.output(ledIds[i["id"]], i["value"])
     except Exception as ex:
-        print(ex)
+        pass
 
+    # rotate servo
     last_hoek = -5000
     try:
         while True:
@@ -119,22 +156,45 @@ def main():
             west = mcp_obj.read_channel(1)
             hoek = (west - oost) * 3
             servoControl = 2.5 + 10 * (180*convert_percentage((hoek)+1023)) / 180
-            # if not (last_hoek - 700 < hoek < last_hoek + 700):
-                # servo.start(0)
-                # servo.ChangeDutyCycle(servoControl)
-                # time.sleep(0.5)
-                # servo.stop()
-                # last_hoek = hoek
+            if not (last_hoek - 3000 < hoek < last_hoek + 3000):
+                servo.start(0)
+                servo.ChangeDutyCycle(servoControl)
+                time.sleep(0.5)
+                servo.stop()
+                last_hoek = hoek
             time.sleep(2)
 
             # simulate energymeter pulses based on how many appliances
-            if not random.randint(0, round(20 / (ledCount + 1))) and ledCount:
-                DataRepository.write_pulse(1)
+            if not random.randint(0, round(10 / (ledCount + 1))) and ledCount:
+                pulse(1)
+
+            # drop live wattage when pulses are further apart
+            # prevents values to stay high when power consumption is 0
+            for i in lastpower:
+                if i == "grid":
+                    break
+                if 3600 / (time.monotonic() - lasttime[i]) <= lastpower[i]:
+                    power = 3600 / (time.monotonic() - lasttime[i])
+                    if power < 100:
+                        power = 0
+                    socketio.emit("B2F_update_power", {"name": i, "power": power})
+                    lastpower[i] = power
+
+                if i == "solar" and lastpower[i] > threshold + lastpower["house"]:
+                    GPIO.output(pinRelais, 1)
+                elif i== "solar":
+                    GPIO.output(pinRelais, 0)
+            # calculate grid usage and send
+            try:
+                lastpower["grid"] = lastpower["house"] - (lastpower["solar"]-lastpower["eco"])
+                socketio.emit("B2F_update_power", {"name": "grid", "power": lastpower["grid"]})
+            except Exception as ex:
+                pass
+
     
 
     except Exception as e:
         mcp_obj.closepi()
-        GPIO.cleanup()
     finally:
         GPIO.output(pinRelais, 0)
         time.sleep(1)
@@ -145,10 +205,8 @@ def main():
 
 
 def start_thread():
-    # threading.Timer(10, all_out).start()
     t = threading.Thread(target=main, daemon=True)
     t.start()
-    print("thread started")
 
 
 # API ENDPOINTS
@@ -168,11 +226,25 @@ def power(scale):
 def appliance():
     return DataRepository.get_appliances()
 
+    
+@app.route('/api/v1/threshold/')
+def get_threshold():
+    return {"threshold": threshold}, 200
+
 
 # SOCKET IO
-@socketio.on('connect')
+@socketio.on('F2B_get_power')
 def initial_connection():
-    print('A new client connect')
+    for i in lastpower:
+        socketio.emit("B2F_update_power", {"name": i, "power": lastpower[i]})
+        
+@socketio.on('F2B_update_threshold')
+def update_threshold(obj):
+    global threshold
+    try:
+        threshold = int(obj["threshold"])
+    except ValueError as ex:
+        pass
 
 
 @socketio.on('F2B_appliance')

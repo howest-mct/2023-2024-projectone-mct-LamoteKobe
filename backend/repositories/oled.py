@@ -3,6 +3,30 @@ import time
 from PIL import Image, ImageDraw
 from subprocess import check_output
 
+def get_ssid():
+    try:
+        # Execute nmcli command to get connection details
+        result = check_output("nmcli -t -f active,ssid dev wifi", shell=True, text=True)
+        lines = result.splitlines()
+        
+        # Filter active connection
+        for line in lines:
+            active, ssid = line.split(':')
+            if active == 'yes':
+                return ssid
+        return "Not connected to any Wi-Fi network"
+    except Exception:
+        return "Error: Could not retrieve SSID"
+
+def get_wlan_ip():
+    try:
+        # Execute ip command to get IP address of wlan0
+        result = check_output("ip -4 addr show wlan0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}'", shell=True, text=True)
+        ip_address = result.strip()
+        return ip_address if ip_address else "No IP address found for wlan0"
+    except Exception:
+        return "Error: Could not retrieve IP address"
+
 class OLED:
     def __init__(self, i2c_bus=1, i2c_address=0x3C):
         self.i2c_address = i2c_address
@@ -63,18 +87,15 @@ class OLED:
                     byte |= (imdata[x + (page * 8 + bit) * self.width] & 0x01) << bit
                 self.bus.write_byte_data(self.i2c_address, 0x40, byte)
 
-if __name__ == "__main__":
-    oled = OLED()
-    oled.clear_display()
-    
-    # Create a blank image for drawing
-    image = Image.new('1', (oled.width, oled.height), 0)
-    draw = ImageDraw.Draw(image)
-    
-    # Draw a simple text
-    ips = check_output(['hostname', '--all-ip-addresses']).decode('ascii')
-    ips = ips.split(' ')
-    draw.text((0, 0), f"{ips[0]}\n{ips[1]}", fill=1)
-    
-    # Display image on the OLED
-    oled.display_image(image)
+    def display_network(self):            
+        image = Image.new('1', (128, 64), 0)
+        draw = ImageDraw.Draw(image)
+        draw.text((0, 0), f"{get_ssid()}\n{get_wlan_ip()}", fill=1)
+        self.display_image(image)
+
+    def display(self, string):
+        image = Image.new('1', (128, 64), 0)
+        draw = ImageDraw.Draw(image)
+        draw.text((0, 0), string, fill=1)
+        self.display_image(image)
+

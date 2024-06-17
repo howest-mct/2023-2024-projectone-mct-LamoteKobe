@@ -34,7 +34,7 @@ $system-blue: #4A90E2;
     color: $system-blue;
   }
 
-  &-car {
+  &-eco {
     fill: $yellow;
     color: $yellow;
   }
@@ -62,10 +62,16 @@ body {
 
 h1 {
   font-weight: 700;
+  color: $btn-color;
 }
 
 h2 {
   font-weight: 600;
+  color: $btn-color;
+}
+
+p {
+  font-weight: 400;
 }
 
 /*---------------------------------------/*
@@ -112,7 +118,7 @@ h2 {
 }
 
 .c-nav {
-  margin: 1rem auto;
+  margin: 2rem auto;
   max-width: 15.5rem;
   padding: 0.25rem;
   border-radius: 1rem;
@@ -154,8 +160,8 @@ h2 {
 
 .c-house {
   margin: auto;
-  padding-top: 2rem;
-  max-width: 48rem;
+  padding: 2rem 0;
+  max-width: 42rem;
 }
 
 
@@ -235,15 +241,23 @@ h2 {
     stroke: $system-blue;
   }
 
+  &__grid-reverse {
+    stroke-dasharray: 16.8;
+    stroke-dashoffset: 100;
+    animation: dash 5s linear forwards infinite;
+    stroke-width: 1rem;
+    stroke: $system-blue;
+  }
+
   &__house {
     stroke-dasharray: 16.8;
     stroke-dashoffset: 100;
     animation: dash 5s linear forwards infinite;
     stroke-width: 1rem;
-    stroke: $yellow;
+    stroke: $system-green;
   }
 
-  &__car {
+  &__eco {
     stroke-dasharray: 16.8;
     stroke-dashoffset: 100;
     animation: dash 5s linear forwards infinite;
@@ -258,6 +272,22 @@ h2 {
   text-transform: uppercase;
   font-size: 2rem;
   fill: $btn-color;
+
+  &__house {
+    fill: $yellow;
+  }
+
+  &__eco {
+    fill: $yellow;
+  }
+
+  &__solar {
+    fill: $system-green;
+  }
+
+  &__grid {
+    fill: $system-blue;
+  }
 }
 
 

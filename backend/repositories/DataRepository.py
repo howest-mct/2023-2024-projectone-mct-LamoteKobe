@@ -11,20 +11,13 @@ class DataRepository:
             gegevens = request.form.to_dict()
         return gegevens
     
-
-    @staticmethod
-    def write_ldr(oost, west):
-        sql = 'insert into DeviceHistory (DeviceID, Date, Value) values (%s, %s, %s) '
-        # Database.execute_sql(sql, params=[1, datetime.now(), oost])
-        # Database.execute_sql(sql, params=[2, datetime.now(), west])
-
+    # update device state in db
     @staticmethod
     def write_appliance(id, state):
         sql = 'insert into DeviceHistory (DeviceID, Date, Value) values (%s, %s, %s)'
         return Database.execute_sql(sql, params=[id, datetime.now(), state])
 
-
-    
+    # get power usage history
     @staticmethod
     def get_power_usage(scale):       
 
@@ -118,39 +111,44 @@ class DataRepository:
         if scale == 1:
             solar = {"constant": Database.get_one_row(sql_constant, params=[4]), "values": Database.get_rows(sql_hour, params=[4])}
             eco = {"constant": Database.get_one_row(sql_constant, params=[5]), "values": Database.get_rows(sql_hour, params=[5])}
-            grid = {"constant": Database.get_one_row(sql_constant, params=[6]), "values": Database.get_rows(sql_hour, params=[6])}
+            house = {"constant": Database.get_one_row(sql_constant, params=[6]), "values": Database.get_rows(sql_hour, params=[6])}
         elif scale == 2:
             solar = {"constant": Database.get_one_row(sql_constant, params=[4]), "values": Database.get_rows(sql_day, params=[4])}
             eco = {"constant": Database.get_one_row(sql_constant, params=[5]), "values": Database.get_rows(sql_day, params=[5])}
-            grid = {"constant": Database.get_one_row(sql_constant, params=[6]), "values": Database.get_rows(sql_day, params=[6])}
+            house = {"constant": Database.get_one_row(sql_constant, params=[6]), "values": Database.get_rows(sql_day, params=[6])}
         elif scale == 3:
             solar = {"constant": Database.get_one_row(sql_constant, params=[4]), "values": Database.get_rows(sql_week, params=[4])}
             eco = {"constant": Database.get_one_row(sql_constant, params=[5]), "values": Database.get_rows(sql_week, params=[5])}
-            grid = {"constant": Database.get_one_row(sql_constant, params=[6]), "values": Database.get_rows(sql_week, params=[6])}
+            house = {"constant": Database.get_one_row(sql_constant, params=[6]), "values": Database.get_rows(sql_week, params=[6])}
         else:
             return 0
         
-        return {"solar": solar, "eco": eco, "grid": grid}
+        return {"solar": solar, "eco": eco, "house": house}
     
-
+    # write pulses from energymeter to db
     @staticmethod
     def write_pulse(pin):
         if pin == 5:
             id = 5
+            name = "eco"
         elif pin == 6:
             id = 4
+            name = "solar"
         elif pin == 1:
             id = 6
+            name = "house"
+
         sql = "insert into DeviceHistory (DeviceID, Date) values (%s, %s)"
         Database.execute_sql(sql, params=[id, datetime.now()])
+        return name
 
     @staticmethod
     def get_appliances():
-        sql = 'SELECT Value FROM demo_homecontrol.DeviceHistory where deviceid = 9 order by date desc limit 1;'
+        sql = 'SELECT Value FROM DeviceHistory where deviceid = 9 order by date desc limit 1;'
         oven = Database.get_one_row(sql)
-        sql = 'SELECT Value FROM demo_homecontrol.DeviceHistory where deviceid = 8 order by date desc limit 1;'
+        sql = 'SELECT Value FROM DeviceHistory where deviceid = 8 order by date desc limit 1;'
         ac = Database.get_one_row(sql)
-        sql = 'SELECT Value FROM demo_homecontrol.DeviceHistory where deviceid = 7 order by date desc limit 1;'
+        sql = 'SELECT Value FROM DeviceHistory where deviceid = 7 order by date desc limit 1;'
         wash = Database.get_one_row(sql)
 
         try:
