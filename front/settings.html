@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Smart Energy Monitor</title>
+    <link rel="stylesheet" href="style/screen.css">
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+        integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="script/datahandler.js"></script>
+    <script src="script/app.js"></script>
+</head>
+
+<body class="js-settings">
+    <header class="c-header">
+        <nav class="c-nav">
+            <ul class="c-nav__items u-rm-list">
+                <li class="c-nav__item js-btn-home">
+                    <p>Live</p>
+                </li>
+                <li class="c-nav__item js-btn-history">
+                    <p>History</p>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div class="o-container">
+        <h2>Eco Threshold </h2>
+        <p>Determine the threshold for non-critical devices in Watt</p>
+        <input class="js-settings-input" type="number">
+    </div>
+</body>
+
+</html>
